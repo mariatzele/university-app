@@ -43,11 +43,7 @@ class TreeView:
 
         # Bind the checkbox toggle function to mouse click
         self.treeview.bind("<Button-1>", self.toggle_checkbox)
-
-    def insert_nodes(self, table_metadata):
-        # Example function to insert nodes into the Treeview
-        for table in table_metadata:
-            self.treeview.insert("", "end", text=table)
+        
 
     def select_table(self):
         """
@@ -81,31 +77,27 @@ class TreeView:
         return table_metadata
 
 
-    def insert_nodes(self, table_metadata_list):
+    def insert_nodes(self, table_metadata):
         """
         Insert nodes into the TreeView from table metadata.
-
-        Args:
-            table_metadata_list (list): A list of dictionaries where each dictionary
-                                        has "table_name" as the parent and
-                                        "column_names" as the children.
+        A list of dictionaries where each dictionary has "table_name" as the 
+        parent and "column_names" as the children.
         """
         #********* NESTED FOR LOOP **********
-        for metadata in table_metadata_list:
+        for metadata in table_metadata:
             # Extract the table name (parent) and column names (children)
-            parent = metadata.get("table_name", "Unnamed Table")
-            children = metadata.get("column_names", [])
+            parent = metadata.get("table_name")
+            children = metadata.get("column_names")
 
             # Insert parent node
             parent_id = self.treeview.insert("", "end",
                                              text=parent)
 
             # Insert child nodes under the parent
-            if isinstance(children, list):
-                for child in children:
-                    self.treeview.insert(parent_id, "end", text=child,
-                                         tags = "checked",
-                                         image=self.checked_image)
+            for child in children:
+                self.treeview.insert(parent_id, "end", text=child,
+                                     tags = "checked",
+                                     image=self.checked_image)
 
     def toggle_checkbox(self, event):
 
@@ -127,8 +119,6 @@ class TreeView:
         else:
             self.treeview.item(item, image = self.checked_image,
                                tags=('checked',))
-            # self.treeview.item(self.treeview.parent(item), image = self.checked_image,
-            #                    tags=('checked',))
             print(f"Checked: {self.treeview.item(item, 'text')}")
 
 
