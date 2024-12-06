@@ -18,9 +18,6 @@ class ListView:
         self.initial_data = self.initial_data()  # Full dataset
         self.filtered_data = self.initial_data
 
-        print(self.initial_data)
-        # self.filtered_data = record_data  # Initially, filtered data is the same as the original
-
         # Column sorting
         self.sort_column = None  # Last sorted column
         self.sort_order = False  # False = ascending, True = descending
@@ -33,9 +30,9 @@ class ListView:
 
     def create_listview(self):
         treeview = ttk.Treeview(self.primary, show='headings')
-
-        if self.metadata:  # If metadata contains column info
-            columns = self.metadata.get("column_names", [])
+        # If metadata contains column info
+        if self.metadata:  
+            columns = self.metadata.get("column_names")
             treeview = ttk.Treeview(self.primary, columns=columns, show='headings')
 
             # Set up column headers and sorting
@@ -53,25 +50,25 @@ class ListView:
         # pulls directly from the class parameters
         # ****** NESTED IFS *******
         # if not record_data or record_data == []:
-        table = self.metadata.get("table_name")  # Now it should correctly reference the instance attribute
+        table = self.metadata.get("table_name")  
         if table == "Students":
-            print(student_records)  # Ensure you have student_records defined somewhere in your code
+            print(student_records)  
             return student_records
         if table == "Courses":
-            print(course_records)  # Ensure you have course_records defined somewhere in your code
+            print(course_records) 
             return course_records
         return []
 
     def update_data(self, data):
         """Clear and populate the Treeview with new data."""
-        self.treeview.delete(*self.treeview.get_children())  # Clear existing rows
+        self.treeview.delete(*self.treeview.get_children()) 
         # Insert data into the Treeview
         # TESTING: test what happens if empty list.
         if data == None:
             return
         for item in data:
             column_values = [item[column] for column in self.treeview["columns"]]
-            self.treeview.insert("", tk.END, values=column_values)  # Insert row into Treeview
+            self.treeview.insert("", tk.END, values=column_values) 
 
     def filter_data(self, query):
         """Filter data based on a query string and update the Treeview."""
