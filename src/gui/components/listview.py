@@ -43,7 +43,7 @@ class ListView:
                 treeview.heading(column, text=column, command=lambda c=column: self.sort_data(c))
                 treeview.column(column, anchor="center")
 
-        treeview.grid(row=2, column=1, sticky="nsew")
+        treeview.grid(row=2, column=1, padx = 20, sticky="nsew")
         return treeview
 
     def initial_data(self):
