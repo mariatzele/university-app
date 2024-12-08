@@ -25,8 +25,6 @@ class DB:
                 user=self.user,
                 password=self.password,
             )
-            if self.connection.is_connected():
-                print("Connected to the database")
         except Error as e:
             raise Exception(f"Error connecting to database: {e}")
 

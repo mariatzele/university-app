@@ -27,11 +27,11 @@ INSERT INTO `programs` (`name`, `degree_awarded`, `duration_years`, `course_requ
 INSERT INTO `lecturers` (`name`, `academic_qualifications`, `department_id`, `expertise`, `research_interests`) VALUES
 ('Dr. John Smith', 'PhD in AI', 1, 'Artificial Intelligence', 'Machine Learning, Robotics'),
 ('Dr. Jane Doe', 'PhD in Electrical Engineering', 2, 'Signal Processing', 'Communication Systems'),
-('Dr. Alan Turing', 'PhD in Mathematics', 6, 'Algorithm Theory', 'Computational Complexity'),
-('Dr. Albert Einstein', 'PhD in Physics', 4, 'Theoretical Physics', 'Quantum Mechanics'),
+('Dr. Alan Turing', 'PhD in Mathematics', 6, 'Automatic Differentiation', 'Computational Complexity'),
+('Dr. Albert Einstein', 'PhD in Physics', 4, 'Radioactivity', 'Quantum Mechanics'),
 ('Dr. Ada Lovelace', 'PhD in Computing', 1, 'Computer Programming', 'Software Engineering'),
 ('Dr. Nikola Tesla', 'PhD in Electrical Engineering', 2, 'Electromagnetic Systems', 'Wireless Communication'),
-('Dr. Charles Babbage', 'PhD in Mathematics', 6, 'Computational Theory', 'Artificial Intelligence'),
+('Dr. Charles Babbage', 'PhD in Mathematics', 6, 'Automatic Differentiation', 'Artificial Intelligence'),
 ('Dr. Marie Curie', 'PhD in Physics', 4, 'Radioactivity', 'Nuclear Physics'),
 ('Dr. Sigmund Freud', 'MD in Psychology', 8, 'Cognitive Psychology', 'Neuropsychology'),
 ('Dr. Eleanor Roosevelt', 'PhD in Economics', 9, 'Macroeconomics', 'International Economics');
@@ -49,8 +49,8 @@ INSERT INTO `courses` (`name`, `description`, `department_id`, `lecturer_id`, `l
 ('Introduction to Law', 'Fundamentals of Law and Legal Systems', 10, 10, 100, 3, 'Political Science', 'Mon, Thu');
 
 INSERT INTO `students` (`name`, `advised_by_lecturer_id`, `date_of_birth`, `contact_info`, `program_id`, `year_of_study`, `graduation_status`, `disciplinary_records`) VALUES
-('Alice Johnson', 1, '2000-01-15', 'alice@email.com', 1, 2, FALSE, 'None'),
-('Bob Williams', 2, '1999-05-23', 'bob@email.com', 2, 1, TRUE, 'None'),
+('Alice Johnson', 1, '2000-01-15', 'alice@email.com', 1, 4, FALSE, 'None'),
+('Bob Williams', 1, '1999-05-23', 'bob@email.com', 2, 1, TRUE, 'None'),
 ('Charlie Brown', 3, '2001-08-30', 'charlie@email.com', 3, 3, FALSE, 'None'),
 ('David Clark', 4, '2000-02-12', 'david@email.com', 4, 1, TRUE, 'None'),
 ('Eva Green', 5, '1998-11-18', 'eva@email.com', 5, 2, FALSE, 'None'),
@@ -166,5 +166,17 @@ INSERT INTO `disciplinary_records` (`id`, `student_id`, `description`) VALUES
 (6, 8, 'Disrespectful comments towards faculty members'),
 (7, 9, 'Unapproved absence from mandatory academic meetings'),
 (8, 10, 'Late payment of tuition fees for multiple semesters');
+
+INSERT INTO `non_academic_staff` (`id`, `name`, `job_title`, `department_id`, `employment_type`, `contract_details`, `salary`, `emergency_contact_info`) VALUES
+(1, 'John Doe', 'Administrative Assistant', 1, 'Full-time', 'Permanent contract', 35000.00, 'Jane Doe, 555-1234'),
+(2, 'Mary Smith', 'HR Coordinator', 2, 'Full-time', 'Permanent contract', 45000.00, 'Tom Smith, 555-5678'),
+(3, 'David Wilson', 'IT Support Specialist', 3, 'Part-time', 'Temporary contract', 30000.00, 'Sarah Wilson, 555-9876'),
+(4, 'Laura Johnson', 'Finance Manager', 4, 'Full-time', 'Permanent contract', 55000.00, 'Mark Johnson, 555-6543'),
+(5, 'Emily Brown', 'Student Affairs Officer', 5, 'Full-time', 'Permanent contract', 42000.00, 'Paul Brown, 555-8765'),
+(6, 'Michael Davis', 'Maintenance Supervisor', 6, 'Full-time', 'Permanent contract', 48000.00, 'Linda Davis, 555-4321'),
+(7, 'Sophia Lee', 'Event Coordinator', 7, 'Full-time', 'Temporary contract', 38000.00, 'Robert Lee, 555-1357'),
+(8, 'James Miller', 'Library Assistant', 8, 'Part-time', 'Temporary contract', 25000.00, 'Catherine Miller, 555-2468'),
+(9, 'William Harris', 'Security Officer', 9, 'Full-time', 'Permanent contract', 40000.00, 'Elizabeth Harris, 555-3579'),
+(10, 'Isabella Martin', 'Administrative Coordinator', 10, 'Full-time', 'Permanent contract', 43000.00, 'John Martin, 555-4680');
 
 COMMIT;
