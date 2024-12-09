@@ -1,6 +1,7 @@
 from ..db import DB
 from ..filter import Filter
 from typing import List
+import sqlparse
 
 
 class BaseRepository:
@@ -15,6 +16,14 @@ class BaseRepository:
     def get(self, filter: Filter):
         result = self.search(filter)
         return result[0] if result else None
+
+    def map_fields(self, fields):
+        mappings = self.get_mappings()
+        return [mappings[field] for field in fields if field in mappings]
+
+    def map_filters(self, filters):
+        mappings = self.get_mappings()
+        return {mappings[key]: value for key, value in filters.items()}
 
     def search(
         self,
@@ -56,6 +65,11 @@ class BaseRepository:
         if limit:
             query += f" LIMIT {limit}"
 
+        # Log queries before being execute - helps for debugging
+        print("==================")
+        print("Executing Query: ")
+        print(sqlparse.format(query, reindent=True, keyword_case="upper"))
+        print("==================")
         return self.db.execute_query(query, params)
 
     def get_joins(self):
@@ -63,3 +77,7 @@ class BaseRepository:
         Method to be overridden in child classes to define specific JOIN logic.
         """
         return ""  # By default, no joins are added. Child classes should override this.
+
+    def get_mappings(self):
+        mappings = {}  # no mappings by default
+        return mappings

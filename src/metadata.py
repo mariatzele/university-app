@@ -18,7 +18,17 @@ class MetadataProvier:
             },
             {
                 "table_name": "courses",
-                "column_names": ["Course", "Department", "Lecturer"],
+                "column_names": [
+                    "id",
+                    "name",
+                    "description",
+                    "department_id",
+                    "lecturer_id",
+                    "level",
+                    "credits",
+                    "prerequisites",
+                    "schedule",
+                ],
             },
         ]
 
