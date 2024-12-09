@@ -1,25 +1,24 @@
 import unittest
-from pprint import pprint
 from dotenv import load_dotenv
-from src.data import DepartmentRepository, DB, Filter, Operators
+from src.data import StaffRepository, DB, Filter, Operators
 
 load_dotenv()
 
 
-class TestDepartmentRepository(unittest.TestCase):
+class TestStaffRepository(unittest.TestCase):
 
     def setUp(self):
         db = DB()
-        self.repo = DepartmentRepository(db)
+        self.repo = StaffRepository(db)
 
     def test_find_all_staff_members_employed_in_a_specific_department(self):
         """
         Find all staff members employed in a specific department
         """
         filter = Filter()
-        filter.add_condition("departments.id", Operators.EQ, 1)
+        filter.add_condition("department_id", Operators.EQ, 1)
 
-        results = self.repo.search_staff(filter)
+        results = self.repo.search(filter)
         self.assertIsInstance(results, list)
         self.assertGreaterEqual(len(results), 0)
 
