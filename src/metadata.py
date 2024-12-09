@@ -38,6 +38,16 @@ class MetadataProvier:
                     "research_areas",
                 ],
             },
+            {
+                "table_name": "staff",
+                "column_names": [
+                    "id",
+                    "name",
+                    "department_id",
+                    "department_name",
+                    "academic_staff",
+                ],
+            },
         ]
 
     def get_table_metadata(self, table_name):

@@ -5,6 +5,7 @@ from data import (
     CourseRepository,
     DepartmentRepository,
     LecturerRepository,
+    StaffRepository,
     Filter,
 )
 from metadata import MetadataProvier
@@ -17,11 +18,13 @@ class App:
         course_repo: CourseRepository,
         lecturer_repo: LecturerRepository,
         department_repo: DepartmentRepository,
+        staff_repo: StaffRepository,
     ):
         self.student_repo = student_repo
         self.course_repo = course_repo
         self.lecturer_repo = lecturer_repo
         self.department_repo = department_repo
+        self.staff_repo = staff_repo
         # stores current table name and columns
         self.current_table = None
         self.active_table = "students"
@@ -137,13 +140,17 @@ class App:
             return self.student_repo.search(
                 self.active_filter, self.student_repo.map_fields(self.checked_boxes)
             )
-        if self.active_table == "courses":
+        elif self.active_table == "courses":
             return self.course_repo.search(
                 self.active_filter, self.course_repo.map_fields(self.checked_boxes)
             )
-        if self.active_table == "departments":
+        elif self.active_table == "departments":
             return self.department_repo.search(
                 self.active_filter, self.department_repo.map_fields(self.checked_boxes)
+            )
+        elif self.active_table == "staff":
+            return self.staff_repo.search(
+                self.active_filter, self.staff_repo.map_fields(self.checked_boxes)
             )
         return []
 
@@ -157,6 +164,8 @@ class App:
             repo = self.course_repo
         if self.active_table == "departments":
             repo = self.department_repo
+        if self.active_table == "staff":
+            repo = self.staff_repo
         if not repo:
             return  # no matching repo found to query
 
@@ -181,7 +190,6 @@ class App:
 
     def handle_checkbox(self, checkbox_name, parent_name):
         # this checkbox belongs to different table - update the list first
-        print(checkbox_name, parent_name)
         if parent_name != self.active_table:
             self.set_active_table(parent_name)
             return

@@ -1,6 +1,5 @@
 import tkinter as tk
-from metadata import MetadataProvier
-from data import Filter, Operators
+from data import Operators
 
 
 class FilterDialog(tk.Toplevel):
@@ -18,12 +17,14 @@ class FilterDialog(tk.Toplevel):
 
         if active_table == "students":
             self.init_student_filters()
-        if active_table == "courses":
+        elif active_table == "courses":
             self.init_course_filters()
-        if active_table == "departments":
+        elif active_table == "departments":
             self.init_department_filters()
+        elif active_table == "staff":
+            self.init_staff_filters()
         else:
-            print("TODO")
+            raise ValueError("invalid table name " + active_table)
 
         # Add Apply and Cancel buttons
         button_frame = tk.Frame(self)
@@ -61,7 +62,7 @@ class FilterDialog(tk.Toplevel):
             "Search for name like:",
             name_filter,
             lambda *args: self.filters["conditions"].update(
-                {"name": (Operators.LIKE, name_filter.get() + "%")}
+                {"name": (Operators.LIKE, "%" + name_filter.get() + "%")}
             ),
         )
 
@@ -263,3 +264,67 @@ class FilterDialog(tk.Toplevel):
                 }
             ),
         )
+
+    def init_staff_filters(self):
+        # Name Filter
+        name_filter = tk.StringVar()
+        name_frame = tk.Frame(self)
+        name_frame.pack(pady=10)
+        self.create_filter(
+            name_frame,
+            "Search for staff name like:",
+            name_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"name": (Operators.LIKE, "%" + name_filter.get() + "%")}
+            ),
+        )
+
+        # Department ID
+        department_filter = tk.StringVar()
+        department_frame = tk.Frame(self)
+        department_frame.pack(pady=10)
+        self.create_filter(
+            department_frame,
+            "Department ID:",
+            department_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"department_id": (Operators.EQ, int(department_filter.get()))}
+            ),
+        )
+
+        # Department name
+        department_name_filter = tk.StringVar()
+        department_name_frame = tk.Frame(self)
+        department_name_frame.pack(pady=10)
+        self.create_filter(
+            department_name_frame,
+            "Search for department name like:",
+            department_name_filter,
+            lambda *args: self.filters["conditions"].update(
+                {
+                    "department_name": (
+                        Operators.LIKE,
+                        "%" + department_name_filter.get() + "%",
+                    )
+                }
+            ),
+        )
+
+        # Academic Staff Filter (Checkbox)
+        academic_staff_filter = tk.BooleanVar()
+        academic_staff_frame = tk.Frame(self)
+        academic_staff_frame.pack(pady=10)
+        tk.Label(academic_staff_frame, text="Graduation Status:").pack(
+            side="left", padx=5
+        )
+        academic_staff_checkbox = tk.Checkbutton(
+            academic_staff_frame,
+            text="Academic Staff",
+            variable=academic_staff_filter,
+            onvalue=True,
+            offvalue=False,
+            command=lambda: self.filters["conditions"].update(
+                {"academic_staff": (Operators.EQ, academic_staff_filter.get())}
+            ),
+        )
+        academic_staff_checkbox.pack(side="left", padx=5)

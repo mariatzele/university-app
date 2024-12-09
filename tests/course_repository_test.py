@@ -1,5 +1,4 @@
 import unittest
-from pprint import pprint
 from dotenv import load_dotenv
 from src.data import CourseRepository, DB, Filter, Operators
 
