@@ -1,63 +1,81 @@
 import tkinter as tk
-from tkinter import ttk
+from metadata import MetadataProvier
+from data import Filter, Operators
 
 
 class FilterDialog(tk.Toplevel):
-    def __init__(self, parent, table_metadata, listview):
+    def __init__(self, parent, active_table, apply_filter_callback):
+        self.active_table = active_table
+        self.apply_filter_callback = apply_filter_callback
+        self.filters = {}
+
         super().__init__(parent)  # Create a Toplevel window
         self.title("Filter Options")
         self.geometry("300x200")
 
-        # Store table metadata and reference to ListView
-        self.table_metadata = table_metadata
-        self.listview = listview  # Reference to the ListView to update
-
         # Add widgets to the dialog (example filters)
-        ttk.Label(self, text="Select Filters:", font=("Arial", 12)).pack(pady=10)
+        tk.Label(self, text="Select Filters:", font=("Arial", 12)).pack(pady=10)
 
-        # Example filter checkboxes
-        self.filter_1 = tk.BooleanVar()
-        self.filter_2 = tk.BooleanVar()
-
-        # PLACEHOLDER/TEST "Filter 1" will automatically filter for "marvin"
-        ttk.Checkbutton(self, text="Search for 'marvin'",
-                    variable=self.filter_1).pack(anchor="w", padx=20)
-        ttk.Checkbutton(self, text="Filter 2",
-        variable=self.filter_2).pack(
-            anchor="w", padx=20)
+        if active_table == "students":
+            self.init_student_filters()
+        if active_table == "courses":
+            self.init_course_filters()
+        else:
+            print("TODO")
 
         # Add Apply and Cancel buttons
-        button_frame = ttk.Frame(self)
+        button_frame = tk.Frame(self)
         button_frame.pack(pady=10)
 
-        apply_button = ttk.Button(button_frame, text="Apply", command=self.apply_filters)
+        apply_button = tk.Button(button_frame, text="Apply", command=self.apply_filters)
         apply_button.pack(side="left", padx=5)
 
-        cancel_button = ttk.Button(button_frame, text="Cancel", command=self.destroy)
+        cancel_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
         cancel_button.pack(side="right", padx=5)
 
     def remove_filters(self):
         pass
 
     def apply_filters(self):
-        if self.filter_1.get():
-            # Apply the "marvin" filter if Filter 1 is selected
-            print("Filter 1 applied: Searching for 'marvin'")
-
-            # Filter the data in ListView for "marvin" (case insensitive)
-            filtered_data = [
-                row for row in self.listview.filtered_data
-                if
-                any("marvin" in str(value).lower() for value in row.values())
-            ]
-
-            # Update the ListView with filtered data
-            self.listview.update_data(filtered_data)
-
-        if self.filter_2.get():
-            print("Filter 2 is applied")
-
-            # Close the dialog after applying filters
+        self.apply_filter_callback(self.filters)
         self.destroy()
 
+    def init_student_filters(self):
+        # name
+        name_filter = tk.StringVar()
+        name_filter.trace_add(
+            "write",
+            lambda *args: self.filters.update(
+                {
+                    "name": (Operators.LIKE, name_filter.get() + "%")
+                }  # Need % to do fuzzy matching
+            ),
+        )
+        name_frame = tk.Frame(self)
+        name_frame.pack(pady=10)
 
+        name_label = tk.Label(name_frame, text="Search for name like:")
+        name_label.pack(side="left", padx=5)  # Add some padding
+
+        name_entry = tk.Entry(name_frame, textvariable=name_filter, width=10)
+        name_entry.pack(side="left", padx=5)
+
+        year_filter = tk.StringVar()
+        year_filter.trace_add(
+            "write",
+            lambda *args: self.filters.update(
+                {"year_of_study": (Operators.EQ, year_filter.get())}
+            ),
+        )
+        year_frame = tk.Frame(self)
+        year_frame.pack(pady=10)
+
+        year_label = tk.Label(year_frame, text="Year of Study:")
+        year_label.pack(side="left", padx=5)  # Add some padding
+
+        year_entry = tk.Entry(year_frame, textvariable=year_filter, width=10)
+        year_entry.pack(side="left", padx=5)
+
+    def init_course_filters(self):
+        # TODO
+        return

@@ -1,101 +1,49 @@
-from dummy_data import student_records
-from dummy_data import course_records
-
+from metadata import MetadataProvier
 
 import tkinter as tk
 from tkinter import ttk
 
+
 class ListView:
-    def __init__(self, primary, table_metadata={}, record_data=[]):
-
-        # Record_data not used for intial data input. Would it be better to
-        # pass the argument in one of the methods? Or should this class be
-        # redesigned entirely?
+    def __init__(self, primary, checked_boxes, record_data):
         self.primary = primary
-        self.metadata = table_metadata
-
-        # Initialize data storage
-        self.initial_data = self.initial_data()  # Full dataset
-        self.filtered_data = self.initial_data
-
-        # Column sorting
-        self.sort_column = None  # Last sorted column
-        self.sort_order = False  # False = ascending, True = descending
+        self.checked_boxes = checked_boxes
 
         # Create the Treeview
         self.treeview = self.create_listview()
 
         # Insert the initial data
-        self.update_data(self.initial_data)
+        self.update_data(record_data)
 
     def create_listview(self):
-        treeview = ttk.Treeview(self.primary, show='headings')
+        treeview = ttk.Treeview(self.primary, show="headings")
         # If metadata contains column info
-        if self.metadata:  
-            columns = self.metadata.get("column_names")
-            treeview = ttk.Treeview(self.primary, columns=columns, show='headings')
+        treeview = ttk.Treeview(
+            self.primary, columns=self.checked_boxes, show="headings"
+        )
 
-            # Set up column headers and sorting
-            for column in columns:
-                treeview.heading(column, text=column, command=lambda c=column: self.sort_data(c))
-                treeview.column(column, anchor="center")
+        # Set up column headers and sorting
+        for column in self.checked_boxes:
+            if column not in self.checked_boxes:
+                continue  # not showing this field
+            treeview.heading(column, text=column)
+            treeview.column(column, anchor="center", width=20)
 
-        treeview.grid(row=2, column=1, padx = 20, sticky="nsew")
+        treeview.grid(row=2, column=1, padx=0, sticky="nsew")
         return treeview
-
-    def initial_data(self):
-        #*******Placeholder code*******
-        """checks the table name and columns returned by the treeview and
-        returns the corresponding data."""
-        # pulls directly from the class parameters
-        # ****** NESTED IFS *******
-        # if not record_data or record_data == []:
-        table = self.metadata.get("table_name")  
-        if table == "Students":
-            print(student_records)  
-            return student_records
-        if table == "Courses":
-            print(course_records) 
-            return course_records
-        return []
 
     def update_data(self, data):
         """Clear and populate the Treeview with new data."""
-        self.treeview.delete(*self.treeview.get_children()) 
+        self.treeview.delete(*self.treeview.get_children())
         # Insert data into the Treeview
         # TESTING: test what happens if empty list.
         if data == None:
             return
         for item in data:
             column_values = [item[column] for column in self.treeview["columns"]]
-            self.treeview.insert("", tk.END, values=column_values) 
-
-    def filter_data(self, query):
-        """Filter data based on a query string and update the Treeview."""
-        # I suspect this may need redoing or a new one based on the filter
-        # system
-        query = query.lower()
-        self.filtered_data = [
-            row for row in self.initial_data
-            if any(query in str(value).lower() for value in row.values())
-        ]
-        self.update_data(self.filtered_data)
-
-    def sort_data(self, column):
-        """Sort the data based on the clicked column."""
-        if column == self.sort_column:
-            self.sort_order = not self.sort_order  # Toggle order
-        else:
-            self.sort_column = column
-            self.sort_order = False  # Default to ascending
-
-        self.filtered_data.sort(
-            key=lambda x: str(x[column]).lower(), reverse=self.sort_order
-        )
-        self.update_data(self.filtered_data)
+            self.treeview.insert("", tk.END, values=column_values)
 
     def destroy(self):
-        """ Destroy the Treeview widget"""
+        """Destroy the Treeview widget"""
         if self.treeview:
             self.treeview.destroy()
-            print("Listview destroyed.")

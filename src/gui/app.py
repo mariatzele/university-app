@@ -1,25 +1,194 @@
-import customtkinter as ctk
-from data import StudentRepository
+import tkinter as tk
+from gui.components import TreeView, ListView, FilterDialog
+from data import StudentRepository, Filter
+from metadata import MetadataProvier
 
 
 class App:
     def __init__(self, student_repo: StudentRepository):
         self.student_repo = student_repo
-        self.build_app()
+        # stores current table name and columns
+        self.current_table = None
+        self.active_table = "students"
+        self.active_filter = Filter()
+        self.checked_boxes = MetadataProvier().get_table_metadata(self.active_table)[
+            "column_names"
+        ]
+
+        self.build_app()  # Initialize the app window (self.app)
 
     def start(self):
         self.app.mainloop()
 
     def build_app(self):
-        self.app = ctk.CTk()
-        self.app.geometry("1000x500")
-        self.app.title("University Management")
-        self.app.focus_force()
+        # Create the main Tkinter window
+        self.app = tk.Tk()
+        self.app.geometry("1200x600")
+        self.app.title("Dashboard")
 
-        label = ctk.CTkLabel(
-            master=self.app,
-            text="University Management",
-            font=("Arial", 32, "bold"),
-            bg_color="transparent",
+        # Configure grid layout
+        self.app.grid_rowconfigure(0, weight=0)  # Dashboard header
+        self.app.grid_rowconfigure(1, weight=0)  # Top bar
+        self.app.grid_rowconfigure(2, weight=1)  # Main content row
+        self.app.grid_columnconfigure(1, weight=4)  # Main content column
+        self.app.grid_columnconfigure(0, weight=1)  # Sidebar column
+        self.app.grid_rowconfigure(0, weight=1)  # Sidebar row
+        self.app.grid_rowconfigure(3, weight=0)  # Footer bar row
+
+        # Dashboard header
+        # Create a frame for the header (row 0)
+        self.top_bar = tk.Frame(self.app, bg="gray", height=40)
+        self.top_bar.grid(row=0, column=0, columnspan=2, sticky="ew")
+        # Add content to the top bar
+        top_bar_label = tk.Label(
+            self.top_bar, text="Dashboard", fg="white", bg="gray", font=("Arial", 16)
         )
-        label.pack(anchor="w")
+        top_bar_label.pack(padx=10, pady=5, side="left")
+
+        # Top bar
+        # Create a frame for the search bar and filter button (row 1 column 1)
+        self.top_bar_frame = tk.Frame(self.app)
+        self.top_bar_frame.grid(
+            row=1, column=1, columnspan=1, padx=20, pady=10, sticky="ew"
+        )
+
+        # Main frame
+        # Create a main frame (row 2)
+        self.main_frame = tk.Frame(self.app, borderwidth=2, height=100)
+        self.main_frame.grid(
+            row=2, column=0, columnspan=2, padx=20, pady=20, sticky="nsew"
+        )
+        # Create the Treeview widget and add it to the main frame
+        self.treeview = TreeView(
+            self.app,
+            self.active_table,
+            self.set_active_table,
+            self.handle_checkbox,
+            self.checked_boxes,
+        )
+        # Create the ListView widget and add it to the main frame
+        self.listview = ListView(self.app, self.checked_boxes, self.get_data())
+
+        # Footer
+        # Create a frame for the footer bar (row 3)
+        self.footer_bar = tk.Frame(self.app, height=30)
+        self.footer_bar.grid(row=3, column=1, columnspan=2, sticky="ew")
+        # Create a frame for the apply button (row 3 column 0)
+        self.footer_bar = tk.Frame(self.app)
+        self.footer_bar.grid(row=3, column=0, padx=20, pady=5, sticky="ew")
+
+        # Buttons, search bar and key bindings
+        # Add the search bar
+        # Hiding search bar for now - we can add it back later
+        # self.search_var = tk.StringVar()
+        # search_bar = tk.Entry(
+        #     self.search_bar_frame, textvariable=self.search_var, font=("Arial", 12)
+        # )
+        # search_bar.pack(padx=1, pady=5, side="left")
+        # # Bind the 'Enter' key to the search bar
+        # search_bar.bind("<Return>", lambda event: self.apply_search())
+        # Add the Search button to the
+        # self.filter_button = tk.Button(
+        #     self.search_bar_frame, text="Search", command=self.apply_search
+        # )
+        # self.filter_button.pack(padx=10, pady=5, side="left")
+
+        # Add the filter button
+        self.filter_button = tk.Button(
+            self.top_bar_frame, text="Filter", command=self.apply_filter
+        )
+        self.filter_button.pack(padx=10, pady=5, side="right")
+        # Add the Apply button to the footer bar
+        self.button = tk.Button(
+            self.footer_bar, text="Apply", command=self.reload_table
+        )
+        self.button.pack(padx=10, pady=10, side="right")
+
+    def reload_table(self):
+        # sort to avoid columns moving around
+        self.checked_boxes = sorted(self.checked_boxes)
+        """
+        This method reloads the data for the table
+        """
+        # Destroy the existing ListView before creating a new one
+        if self.listview:
+            self.listview.destroy()
+
+        if self.treeview:
+            self.treeview.destroy()
+
+        # Create and display the ListView with the table metadata
+        self.listview = ListView(self.app, self.checked_boxes, self.get_data())
+        self.treeview = TreeView(
+            self.app,
+            self.active_table,
+            self.set_active_table,
+            self.handle_checkbox,
+            self.checked_boxes,
+        )
+
+    def apply_filter(self):
+        """
+        This method is triggered when the filter button is clicked.
+        It calls the table_selection method from TreeView, which gets the
+        selected table metadata.
+        Then it opens the FilterDialog with the retrieved metadata.
+        """
+        FilterDialog(self.app, self.active_table, self.handle_filter_apply)
+
+    def apply_search(self):
+        query = self.search_var.get().lower()
+        self.listview.filter_data(query)
+
+    def get_data(self):
+        if self.active_table == "students":
+            return self.student_repo.search(
+                self.active_filter, self.student_repo.map_fields(self.checked_boxes)
+            )
+        return []
+
+    def handle_filter_apply(self, filters):
+        # map filters to table values
+        filter = Filter()
+        if self.active_table == "students":
+            mapped_filters = self.student_repo.map_filters(filters)
+            for column, (operator, value) in mapped_filters.items():
+                if not value:
+                    continue
+                filter.add_condition(column, operator, value)
+
+        self.active_filter = filter
+        self.reload_table()
+
+    def handle_checkbox(self, checkbox_name, parent_name):
+        # this checkbox belongs to different table - update the list first
+        print(checkbox_name, parent_name)
+        if parent_name != self.active_table:
+            self.set_active_table(parent_name)
+            return
+        if checkbox_name in self.checked_boxes:
+            self.checked_boxes.remove(checkbox_name)
+        else:
+            self.checked_boxes.append(checkbox_name)
+        self.reload_table()  # updated fields need to reload data
+
+    def set_active_table(self, table):
+        prev = self.active_table
+        if table == "Students":
+            self.active_table = "students"
+        if table == "Courses":
+            self.active_table = "courses"
+        if table == "Departments":
+            self.active_table = "departments"
+        if table == "Staff":
+            self.active_table = "staff"
+        if table == "Lecturers":
+            self.active_table = "lecturers"
+
+        if prev != self.active_table:
+            self.active_filter = Filter()  # clear filter
+            # set all checkboxes to true
+            self.checked_boxes = MetadataProvier().get_table_metadata(
+                self.active_table
+            )["column_names"]
+            self.reload_table()
