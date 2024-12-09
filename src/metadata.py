@@ -30,6 +30,14 @@ class MetadataProvier:
                     "schedule",
                 ],
             },
+            {
+                "table_name": "departments",
+                "column_names": [
+                    "id",
+                    "name",
+                    "research_areas",
+                ],
+            },
         ]
 
     def get_table_metadata(self, table_name):

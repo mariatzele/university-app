@@ -20,6 +20,8 @@ class FilterDialog(tk.Toplevel):
             self.init_student_filters()
         if active_table == "courses":
             self.init_course_filters()
+        if active_table == "departments":
+            self.init_department_filters()
         else:
             print("TODO")
 
@@ -154,3 +156,35 @@ class FilterDialog(tk.Toplevel):
     def init_course_filters(self):
         # TODO
         return
+
+    def init_department_filters(self):
+        # Name Filter
+        name_filter = tk.StringVar()
+        name_frame = tk.Frame(self)
+        name_frame.pack(pady=10)
+        self.create_filter(
+            name_frame,
+            "Search for name like:",
+            name_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"name": (Operators.LIKE, name_filter.get() + "%")}
+            ),
+        )
+
+        # Research areas
+        research_areas_filter = tk.StringVar()
+        research_areas_frame = tk.Frame(self)
+        research_areas_frame.pack(pady=10)
+        self.create_filter(
+            research_areas_frame,
+            "Search for research areas like:",
+            research_areas_filter,
+            lambda *args: self.filters["conditions"].update(
+                {
+                    "research_areas": (
+                        Operators.LIKE,
+                        "%" + research_areas_filter.get() + "%",
+                    )
+                }
+            ),
+        )

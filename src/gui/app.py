@@ -146,6 +146,10 @@ class App:
             return self.course_repo.search(
                 self.active_filter, self.course_repo.map_fields(self.checked_boxes)
             )
+        if self.active_table == "departments":
+            return self.department_repo.search(
+                self.active_filter, self.department_repo.map_fields(self.checked_boxes)
+            )
         return []
 
     def handle_filter_apply(self, filters):
@@ -156,6 +160,8 @@ class App:
             repo = self.student_repo
         if self.active_table == "courses":
             repo = self.course_repo
+        if self.active_table == "departments":
+            repo = self.department_repo
         if not repo:
             return  # no matching repo found to query
 

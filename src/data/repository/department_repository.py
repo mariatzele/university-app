@@ -17,6 +17,14 @@ class DepartmentRepository(BaseRepository):
         return """
         """
 
+    def get_mappings(self):
+        mappings = {
+            "id": "departments.id",
+            "name": "departments.name",
+            "research_areas": "departments.research_areas",
+        }
+        return mappings
+
     def search_staff(
         self,
         filter: Filter = None,
