@@ -154,8 +154,83 @@ class FilterDialog(tk.Toplevel):
         grad_status_checkbox.pack(side="left", padx=5)
 
     def init_course_filters(self):
-        # TODO
-        return
+        # Name Filter
+        name_filter = tk.StringVar()
+        name_frame = tk.Frame(self)
+        name_frame.pack(pady=10)
+        self.create_filter(
+            name_frame,
+            "Search for name like:",
+            name_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"name": (Operators.LIKE, "%" + name_filter.get() + "%")}
+            ),
+        )
+
+        # Description
+        description_filter = tk.StringVar()
+        description_frame = tk.Frame(self)
+        description_frame.pack(pady=10)
+        self.create_filter(
+            description_frame,
+            "Search for description like:",
+            description_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"description": (Operators.LIKE, "%" + description_filter.get() + "%")}
+            ),
+        )
+
+        # Lecturer ID
+        lecturer_filter = tk.StringVar()
+        lecturer_frame = tk.Frame(self)
+        lecturer_frame.pack(pady=10)
+        self.create_filter(
+            lecturer_frame,
+            "Lecturer ID:",
+            lecturer_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"lecturer_id": (Operators.EQ, int(lecturer_filter.get()))}
+            ),
+        )
+
+        # Department ID
+        department_filter = tk.StringVar()
+        department_frame = tk.Frame(self)
+        department_frame.pack(pady=10)
+        self.create_filter(
+            department_frame,
+            "Department ID:",
+            department_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"department_id": (Operators.EQ, int(department_filter.get()))}
+            ),
+        )
+
+        # Level
+        level_filter = tk.StringVar()
+        level_frame = tk.Frame(self)
+        level_frame.pack(pady=10)
+        self.create_filter(
+            level_frame,
+            "Level:",
+            level_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"level": (Operators.EQ, int(level_filter.get()))}
+            ),
+        )
+
+        # Credits
+        credits_filter = tk.StringVar()
+        credits_frame = tk.Frame(self)
+        credits_frame.pack(pady=10)
+        self.create_filter(
+            credits_frame,
+            "Credits:",
+            credits_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"credits": (Operators.EQ, int(credits_filter.get()))}
+            ),
+        )
 
     def init_department_filters(self):
         # Name Filter

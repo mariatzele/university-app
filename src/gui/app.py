@@ -97,11 +97,6 @@ class App:
             self.top_bar_frame, text="Filter", command=self.apply_filter
         )
         self.filter_button.pack(padx=10, pady=5, side="right")
-        # Add the Apply button to the footer bar
-        self.button = tk.Button(
-            self.footer_bar, text="Apply", command=self.reload_table
-        )
-        self.button.pack(padx=10, pady=10, side="right")
 
     def reload_table(self):
         """
