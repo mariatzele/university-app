@@ -7,9 +7,9 @@ class DB:
     def __init__(self, connection=None):
         self.host = os.getenv("DB_HOST")
         self.port = int(os.getenv("DB_PORT", 3306))
-        self.database = os.getenv("DB_NAME")
-        self.user = os.getenv("DB_USER")
-        self.password = os.getenv("DB_PASSWORD")
+        self.database = 'uni_app'
+        self.user = 'root'
+        self.password = 'PosT1n*rEn7'
         self.connection = connection
 
         if not self.connection:
