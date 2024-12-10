@@ -37,15 +37,11 @@ class TreeView:
             Image.open(unchecked_image_path).resize((16, 16))
         )
 
-        # Create and configure a frame to hold the Treeview
-        self.frame = ttk.Frame(self.primary)
-        self.frame.grid(row=2, column=0, padx=20, pady=0, sticky="nsew")
-        self.frame.grid_rowconfigure(0, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
+
 
         # Create the Treeview widget with height parameter
         # Q: should this function be run under init?
-        self.treeview = ttk.Treeview(self.frame, height=21)
+        self.treeview = ttk.Treeview(primary, height=21)
         self.treeview.column("#0", width=100, anchor="w")
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
 

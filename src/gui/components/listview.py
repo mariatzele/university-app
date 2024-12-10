@@ -29,7 +29,7 @@ class ListView:
             treeview.heading(column, text=column)
             treeview.column(column, anchor="center", width=20)
 
-        treeview.grid(row=2, column=1, padx=0, sticky="nsew")
+        treeview.grid(row=2, column=1, padx=20, sticky="nsew")
         return treeview
 
     def update_data(self, data):
