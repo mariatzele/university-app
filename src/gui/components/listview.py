@@ -23,7 +23,7 @@ class ListView:
         )
 
         # Set up column headers and sorting
-        for column in self.checked_boxes:
+        for column in sorted(self.checked_boxes):
             if column not in self.checked_boxes:
                 continue  # not showing this field
             treeview.heading(column, text=column)

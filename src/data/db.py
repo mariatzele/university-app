@@ -32,7 +32,6 @@ class DB:
         """Disconnect frmo database."""
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            print("Connection closed")
 
     def execute_query(self, query, params=None):
         """Execute a single query and return results as dictionaries"""

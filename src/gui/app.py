@@ -1,12 +1,30 @@
 import tkinter as tk
 from gui.components import TreeView, ListView, FilterDialog
-from data import StudentRepository, Filter
+from data import (
+    StudentRepository,
+    CourseRepository,
+    DepartmentRepository,
+    LecturerRepository,
+    StaffRepository,
+    Filter,
+)
 from metadata import MetadataProvier
 
 
 class App:
-    def __init__(self, student_repo: StudentRepository):
+    def __init__(
+        self,
+        student_repo: StudentRepository,
+        course_repo: CourseRepository,
+        lecturer_repo: LecturerRepository,
+        department_repo: DepartmentRepository,
+        staff_repo: StaffRepository,
+    ):
         self.student_repo = student_repo
+        self.course_repo = course_repo
+        self.lecturer_repo = lecturer_repo
+        self.department_repo = department_repo
+        self.staff_repo = staff_repo
         # stores current table name and columns
         self.current_table = None
         self.active_table = "students"
@@ -77,36 +95,13 @@ class App:
         self.footer_bar = tk.Frame(self.app)
         self.footer_bar.grid(row=3, column=0, padx=20, pady=5, sticky="ew")
 
-        # Buttons, search bar and key bindings
-        # Add the search bar
-        # Hiding search bar for now - we can add it back later
-        # self.search_var = tk.StringVar()
-        # search_bar = tk.Entry(
-        #     self.search_bar_frame, textvariable=self.search_var, font=("Arial", 12)
-        # )
-        # search_bar.pack(padx=1, pady=5, side="left")
-        # # Bind the 'Enter' key to the search bar
-        # search_bar.bind("<Return>", lambda event: self.apply_search())
-        # Add the Search button to the
-        # self.filter_button = tk.Button(
-        #     self.search_bar_frame, text="Search", command=self.apply_search
-        # )
-        # self.filter_button.pack(padx=10, pady=5, side="left")
-
         # Add the filter button
         self.filter_button = tk.Button(
             self.top_bar_frame, text="Filter", command=self.apply_filter
         )
         self.filter_button.pack(padx=10, pady=5, side="right")
-        # Add the Apply button to the footer bar
-        self.button = tk.Button(
-            self.footer_bar, text="Apply", command=self.reload_table
-        )
-        self.button.pack(padx=10, pady=10, side="right")
 
     def reload_table(self):
-        # sort to avoid columns moving around
-        self.checked_boxes = sorted(self.checked_boxes)
         """
         This method reloads the data for the table
         """
@@ -145,24 +140,56 @@ class App:
             return self.student_repo.search(
                 self.active_filter, self.student_repo.map_fields(self.checked_boxes)
             )
+        elif self.active_table == "courses":
+            return self.course_repo.search(
+                self.active_filter, self.course_repo.map_fields(self.checked_boxes)
+            )
+        elif self.active_table == "departments":
+            return self.department_repo.search(
+                self.active_filter, self.department_repo.map_fields(self.checked_boxes)
+            )
+        elif self.active_table == "staff":
+            return self.staff_repo.search(
+                self.active_filter, self.staff_repo.map_fields(self.checked_boxes)
+            )
         return []
 
     def handle_filter_apply(self, filters):
         # map filters to table values
         filter = Filter()
+        repo = None
         if self.active_table == "students":
-            mapped_filters = self.student_repo.map_filters(filters)
-            for column, (operator, value) in mapped_filters.items():
-                if not value:
-                    continue
-                filter.add_condition(column, operator, value)
+            repo = self.student_repo
+        if self.active_table == "courses":
+            repo = self.course_repo
+        if self.active_table == "departments":
+            repo = self.department_repo
+        if self.active_table == "staff":
+            repo = self.staff_repo
+        if not repo:
+            return  # no matching repo found to query
+
+        # map conditions
+        mapped_filters_conditions = repo.map_filters(filters["conditions"])
+        for column, (operator, value) in mapped_filters_conditions.items():
+            if not value:
+                continue
+            filter.add_condition(column, operator, value)
+
+        for column, (
+            aggregate_op,
+            condition_op,
+            value,
+        ) in filters["aggregates"].items():
+            if not value:
+                continue
+            filter.add_aggregate_condition(column, aggregate_op, condition_op, value)
 
         self.active_filter = filter
         self.reload_table()
 
     def handle_checkbox(self, checkbox_name, parent_name):
         # this checkbox belongs to different table - update the list first
-        print(checkbox_name, parent_name)
         if parent_name != self.active_table:
             self.set_active_table(parent_name)
             return
@@ -174,15 +201,15 @@ class App:
 
     def set_active_table(self, table):
         prev = self.active_table
-        if table == "Students":
+        if table == "students":
             self.active_table = "students"
-        if table == "Courses":
+        if table == "courses":
             self.active_table = "courses"
-        if table == "Departments":
+        if table == "departments":
             self.active_table = "departments"
-        if table == "Staff":
+        if table == "staff":
             self.active_table = "staff"
-        if table == "Lecturers":
+        if table == "lecturers":
             self.active_table = "lecturers"
 
         if prev != self.active_table:

@@ -4,6 +4,7 @@ from .repository import (
     LecturerRepository,
     CourseRepository,
     DepartmentRepository,
+    StaffRepository,
 )
 from .filter import Filter
 from .operators import Operators
