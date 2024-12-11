@@ -63,8 +63,8 @@ class App:
         self.header = tk.Frame(self.app, bg=db_colour)
         self.header.grid(row=0, column=0, columnspan=2, sticky="ew")
 
-        # self.header.grid_propagate(False)
-        # Add content to the dashboard ***************
+
+        # Add content to the dashboard 
         header_logo = tk.Label(self.header, text="ABC UNIVERSITY", fg="white",
                                bg=db_colour, font=("Arial", 16))
         header_label = tk.Label(self.header, text="Dashboard", fg="white",
