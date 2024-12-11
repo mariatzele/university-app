@@ -12,7 +12,7 @@ class ListView:
         # Create the Treeview
         self.treeview = self.create_listview()
 
-        # Insert the initial data
+        # Insert the data
         self.update_data(record_data)
 
     def create_listview(self):
@@ -36,7 +36,6 @@ class ListView:
         """Clear and populate the Treeview with new data."""
         self.treeview.delete(*self.treeview.get_children())
         # Insert data into the Treeview
-        # TESTING: test what happens if empty list.
         if data == None:
             return
         for item in data:
