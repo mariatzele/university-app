@@ -54,9 +54,20 @@ class FilterDialog(tk.Toplevel):
             (department["id"], department["name"]) for department in departments
         ]
 
+        students = self.student_repo.search(
+            filter=Filter(), fields=["students.id", "students.name"]
+        )
+        self.students = [(student["id"], student["name"]) for student in students]
+
+        courses = self.course_repo.search(
+            filter=Filter(), fields=["courses.id", "courses.name"]
+        )
+        self.courses = [(course["id"], course["name"]) for course in courses]
+        self.courses.insert(0, ("NULL", "Not enrolled in any course"))
+
         super().__init__(parent)  # Create a Toplevel window
         self.title("Filter Options")
-        self.geometry("500x450")
+        self.geometry("450x500")
 
         # Add widgets to the dialog (example filters)
         tk.Label(self, text="Select Filters:", font=("Arial", 12)).pack(pady=10)
@@ -165,6 +176,18 @@ class FilterDialog(tk.Toplevel):
             ),
         )
 
+        # Enrolled in course
+        course_frame = tk.Frame(self)
+        course_frame.pack(pady=10)
+        self.create_dropdown(
+            course_frame,
+            self.courses,
+            "Enrolled in course",
+            lambda course_id: self.filters["conditions"].update(
+                {"course_id": (Operators.EQ, course_id)}
+            ),
+        )
+
         # Contact Info Filter
         contact_filter = tk.StringVar()
         contact_frame = tk.Frame(self)
@@ -179,7 +202,6 @@ class FilterDialog(tk.Toplevel):
         )
 
         # Program Filter
-        program_filter = tk.StringVar()
         program_frame = tk.Frame(self)
         program_frame.pack(pady=10)
         self.create_dropdown(
@@ -192,19 +214,19 @@ class FilterDialog(tk.Toplevel):
         )
 
         # Average grade filter
-        program_filter = tk.StringVar()
-        program_frame = tk.Frame(self)
-        program_frame.pack(pady=10)
+        avg_grade_filter = tk.StringVar()
+        avg_grade_frame = tk.Frame(self)
+        avg_grade_frame.pack(pady=10)
         self.create_filter(
-            program_frame,
+            avg_grade_frame,
             "Average grade higher than:",
-            program_filter,
+            avg_grade_filter,
             lambda *args: self.filters["aggregates"].update(
                 {
                     "student_enrollments.grade": (  # can't use avg_grade here because it's in the SELECT
                         "AVG",
                         Operators.GT,
-                        int(program_filter.get()),
+                        int(avg_grade_filter.get()),
                     )
                 }
             ),
@@ -440,6 +462,30 @@ class FilterDialog(tk.Toplevel):
             "Department",
             lambda department_id: self.filters["conditions"].update(
                 {"department_id": (Operators.EQ, department_id)}
+            ),
+        )
+
+        # Advisor of student
+        advisor_of_frame = tk.Frame(self)
+        advisor_of_frame.pack(pady=10)
+        self.create_dropdown(
+            advisor_of_frame,
+            self.students,
+            "Advisor of",
+            lambda student_id: self.filters["conditions"].update(
+                {"student_id": (Operators.EQ, student_id)}
+            ),
+        )
+
+        # Program Filter
+        program_frame = tk.Frame(self)
+        program_frame.pack(pady=10)
+        self.create_dropdown(
+            program_frame,
+            self.programs,
+            "Program",
+            lambda program_id: self.filters["conditions"].update(
+                {"program_id": (Operators.EQ, program_id)}
             ),
         )
 

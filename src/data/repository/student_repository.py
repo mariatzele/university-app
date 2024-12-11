@@ -21,6 +21,7 @@ class StudentRepository(BaseRepository):
             "Year of study": "students.year_of_study",
             "Graduated": f"{self.field_to_boolean("students.graduation_status", "YES", "NO")}",
             "Disciplinary records": "GROUP_CONCAT(disciplinary_records.description)",
+            "Courses": "GROUP_CONCAT(courses.name)",
             "Average grade": "ROUND(AVG(student_enrollments.grade))",
         }
         return mappings
@@ -32,6 +33,7 @@ class StudentRepository(BaseRepository):
             "advised_by_lecturer_id": "students.advised_by_lecturer_id",
             "date_of_birth": "students.date_of_birth",
             "contact_info": "students.contact_info",
+            "course_id": "courses.id",
             "program_id": "students.program_id",
             "year_of_study": "students.year_of_study",
             "graduation_status": "students.graduation_status",

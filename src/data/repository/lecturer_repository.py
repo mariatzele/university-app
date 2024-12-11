@@ -18,6 +18,8 @@ class LecturerRepository(BaseRepository):
             "Department": "departments.name",
             "Expertise": "lecturers.expertise",
             "Interests": "lecturers.research_interests",
+            "Projects Supervised": "COUNT(research_projects.id)",
+            "Programs": "GROUP_CONCAT(programs.name)",
         }
         return mappings
 
@@ -28,6 +30,8 @@ class LecturerRepository(BaseRepository):
             "academic_qualifications": "lecturers.academic_qualifications",
             "department_id": "lecturers.department_id",
             "expertise": "lecturers.expertise",
+            "student_id": "students.id",
+            "program_id": "programs.id",
             "research_interests": "lecturers.research_interests",
         }
         return mappings

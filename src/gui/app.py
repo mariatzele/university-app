@@ -190,6 +190,8 @@ class App:
         for column, (operator, value) in mapped_filters_conditions.items():
             if not value:
                 continue
+            if value == "NULL":  # handle NULL
+                value = None
             filter.add_condition(column, operator, value)
 
         for column, (
