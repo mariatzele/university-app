@@ -10,7 +10,15 @@ class DepartmentRepository(BaseRepository):
     def __init__(self, db: DB):
         super().__init__(db, "departments")
 
-    def get_mappings(self):
+    def get_field_mappings(self):
+        mappings = {
+            "ID": "departments.id",
+            "Name": "departments.name",
+            "Research areas": "departments.research_areas",
+        }
+        return mappings
+
+    def get_filter_mappings(self):
         mappings = {
             "id": "departments.id",
             "name": "departments.name",

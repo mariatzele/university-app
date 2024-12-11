@@ -6,12 +6,12 @@ sys.path.append(
 )
 from tkinter import ttk
 from PIL import Image, ImageTk
-from metadata import MetadataProvier
 
 
 class TreeView:
     def __init__(
         self,
+        metadata,
         primary,
         active_table,
         table_change_callback,
@@ -22,7 +22,7 @@ class TreeView:
         self.active_table = active_table
         self.table_change_callback = table_change_callback
         self.checkbox_change_callback = checkbox_change_callback
-        self.table_metadata = MetadataProvier().get_all_table_metadata()
+        self.table_metadata = metadata.get_all_table_metadata()
         self.checked_boxes = checked_boxes
 
         # Path for images
@@ -37,11 +37,10 @@ class TreeView:
             Image.open(unchecked_image_path).resize((16, 16))
         )
 
-
-
         # Create the Treeview widget with height parameter
         self.treeview = ttk.Treeview(primary, height=21)
         self.treeview.column("#0", width=100, anchor="w")
+
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
 
         # Place the Treeview using grid
@@ -58,6 +57,7 @@ class TreeView:
         item = self.treeview.selection()
         if item:
             self.table_change_callback(self.treeview.item(item[0], "text"))
+
 
     def select_table(self):
         """
@@ -105,8 +105,7 @@ class TreeView:
             )
 
             # Insert child nodes under the parent
-            for child in children:
-                is_checked = True if child in self.checked_boxes else False
+            for child, is_checked in self.checked_boxes:
                 self.treeview.insert(
                     parent_id,
                     "end",

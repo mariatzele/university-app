@@ -10,7 +10,21 @@ class CourseRepository(BaseRepository):
     def __init__(self, db: DB):
         super().__init__(db, "courses")
 
-    def get_mappings(self):
+    def get_field_mappings(self):
+        mappings = {
+            "ID": "courses.id",
+            "Name": "courses.name",
+            "Description": "courses.description",
+            "Department": "departments.name",
+            "Lecturer": "lecturers.name",
+            "Level": "courses.level",
+            "Credits": "courses.credits",
+            "Prerequisites": "courses.prerequisites",
+            "Schedule": "courses.schedule",
+        }
+        return mappings
+
+    def get_filter_mappings(self):
         mappings = {
             "id": "courses.id",
             "name": "courses.name",
@@ -27,4 +41,5 @@ class CourseRepository(BaseRepository):
     def get_joins(self):
         return """
             LEFT JOIN lecturers ON courses.lecturer_id = lecturers.id
+            LEFT JOIN departments on courses.department_id = departments.id
         """

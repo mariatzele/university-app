@@ -5,6 +5,8 @@ from .repository import (
     CourseRepository,
     DepartmentRepository,
     StaffRepository,
+    ProgramRepository,
+    BaseRepository,
 )
 from .filter import Filter
 from .operators import Operators
