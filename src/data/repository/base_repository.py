@@ -18,11 +18,13 @@ class BaseRepository:
         return result[0] if result else None
 
     def map_fields(self, fields):
-        mappings = self.get_mappings()
-        return [mappings[field] for field in fields if field in mappings]
+        mappings = self.get_field_mappings()
+        return [
+            f"{mappings[field]} as `{field}`" for field in fields if field in mappings
+        ]
 
     def map_filters(self, filters):
-        mappings = self.get_mappings()
+        mappings = self.get_filter_mappings()
         return {mappings[key]: value for key, value in filters.items()}
 
     def search(
@@ -78,6 +80,21 @@ class BaseRepository:
         """
         return ""  # By default, no joins are added. Child classes should override this.
 
-    def get_mappings(self):
+    def get_field_mappings(self):
         mappings = {}  # no mappings by default
         return mappings
+
+    def get_filter_mappings(self):
+        return self.get_field_mappings()
+
+    def get_column_names(self):
+        return list(self.get_field_mappings().keys())
+
+    def field_to_boolean(self, field_name, true_value, false_value):
+        return f"""
+        CASE 
+            WHEN {field_name} = TRUE THEN '{true_value}'
+            WHEN {field_name} = FALSE THEN '{false_value}'
+            ELSE 'unknown'
+        END
+        """

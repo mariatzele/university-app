@@ -15,7 +15,16 @@ class StaffRepository(BaseRepository):
         # and override the search method
         super().__init__(db, "staff")
 
-    def get_mappings(self):
+    def get_field_mappings(self):
+        mappings = {
+            "ID": "staff.id",
+            "Name": "staff.name",
+            "Department": "staff.department_name",
+            "Academic staff": f"{self.field_to_boolean("staff.academic_staff", "YES", "NO")}",
+        }
+        return mappings
+
+    def get_filter_mappings(self):
         mappings = {
             "id": "staff.id",
             "name": "staff.name",

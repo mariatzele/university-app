@@ -7,6 +7,7 @@ from data import (
     LecturerRepository,
     DepartmentRepository,
     StaffRepository,
+    ProgramRepository,
 )
 
 load_dotenv()
@@ -17,6 +18,7 @@ course_repo = CourseRepository(db)
 lecturer_repo = LecturerRepository(db)
 department_repo = DepartmentRepository(db)
 staff_repo = StaffRepository(db)
+program_repo = ProgramRepository(db)
 
 app = App(
     student_repo=student_repo,
@@ -24,6 +26,7 @@ app = App(
     lecturer_repo=lecturer_repo,
     department_repo=department_repo,
     staff_repo=staff_repo,
+    program_repo=program_repo,
 )
 
 app.start()
