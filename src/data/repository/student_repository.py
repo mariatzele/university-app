@@ -19,7 +19,7 @@ class StudentRepository(BaseRepository):
             "Contact": "students.contact_info",
             "Program": "programs.name",
             "Year of study": "students.year_of_study",
-            "Graduated": f"{self.field_to_boolean("students.graduation_status", "YES", "NO")}",
+            "Graduated": f"{self.field_to_boolean('students.graduation_status', 'YES', 'NO')}",
             "Disciplinary records": "GROUP_CONCAT(disciplinary_records.description)",
             "Courses": "GROUP_CONCAT(courses.name)",
             "Average grade": "ROUND(AVG(student_enrollments.grade))",

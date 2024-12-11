@@ -30,22 +30,18 @@ class TreeView:
         checked_image_path = os.path.join(self.assets, "checked_box.png")
         unchecked_image_path = os.path.join(self.assets, "unchecked_box.png")
         # Images
-        self.checked_image = ImageTk.PhotoImage(
-            Image.open(checked_image_path).resize((16, 16))
-        )
-        self.unchecked_image = ImageTk.PhotoImage(
-            Image.open(unchecked_image_path).resize((16, 16))
-        )
-
-        # Create and configure a frame to hold the Treeview
-        self.frame = ttk.Frame(self.primary)
-        self.frame.grid(row=2, column=0, padx=10, pady=0, sticky="nsew")
-        self.frame.grid_rowconfigure(0, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
+        try:
+            self.checked_image = ImageTk.PhotoImage(
+                Image.open(checked_image_path).resize((16, 16))
+            )
+            self.unchecked_image = ImageTk.PhotoImage(
+                Image.open(unchecked_image_path).resize((16, 16))
+            )
+        except OSError:
+            print("Image not found")
 
         # Create the Treeview widget with height parameter
-        # Q: should this function be run under init?
-        self.treeview = ttk.Treeview(self.frame, height=21)
+        self.treeview = ttk.Treeview(self.primary, height=21)
         self.treeview.column("#0", width=40, anchor="w")
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
 
@@ -54,8 +50,8 @@ class TreeView:
         # Set column headings
         self.treeview.heading("#0", text="Tables")
 
+        # Insert table and column names
         self.insert_nodes()
-
         # Bind the checkbox toggle function to mouse click
         self.treeview.bind("<Button-1>", self.toggle_checkbox)
 
