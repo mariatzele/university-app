@@ -11,8 +11,8 @@ class ListView:
         # Create the Treeview
         self.treeview = self.create_listview()
 
-        # Insert the initial data
-        self.update_data()
+        # Insert the data
+        self.update_data(record_data)
 
     def create_listview(self):
         columns = [column for column, is_checked in self.checked_boxes if is_checked]
@@ -25,22 +25,18 @@ class ListView:
             treeview.heading(column, text=column)
             treeview.column(column, anchor="center", width=20)
 
-        if len(self.record_data) > 0:
-            for column in columns:
-                max_length = max(len(str(item[column])) for item in self.record_data)
-                treeview.column(
-                    column, width=min(max(10, max_length * 10), 50)
-                )  # Adjust width
 
-        treeview.grid(row=2, column=1, padx=0, sticky="nsew")
+        treeview.grid(row=2, column=1, padx=20, sticky="nsew")
+
         return treeview
 
     def update_data(self):
         """Clear and populate the Treeview with new data."""
         self.treeview.delete(*self.treeview.get_children())
         # Insert data into the Treeview
-        # TESTING: test what happens if empty list.
-        if self.record_data == None:
+
+        if data == None:
+
             return
         for item in self.record_data:
             column_values = [item[column] for column in self.treeview["columns"]]
