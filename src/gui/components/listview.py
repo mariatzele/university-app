@@ -11,7 +11,7 @@ class ListView:
         # Create the Treeview
         self.treeview = self.create_listview()
 
-        # Insert the initial data
+        # Insert  data
         self.update_data()
 
     def create_listview(self):
@@ -20,7 +20,7 @@ class ListView:
         # If metadata contains column info
         treeview = ttk.Treeview(self.primary, columns=columns, show="headings")
 
-        # Set up column headers and sorting
+        # Set up column headers
         for column in columns:
             treeview.heading(column, text=column)
             treeview.column(column, anchor="center", width=20)
@@ -32,14 +32,13 @@ class ListView:
                     column, width=min(max(10, max_length * 10), 50)
                 )  # Adjust width
 
-        treeview.grid(row=2, column=1, padx=0, sticky="nsew")
+        treeview.grid(row=2, column=1, padx=20, sticky="nsew")
         return treeview
 
     def update_data(self):
         """Clear and populate the Treeview with new data."""
         self.treeview.delete(*self.treeview.get_children())
         # Insert data into the Treeview
-        # TESTING: test what happens if empty list.
         if self.record_data == None:
             return
         for item in self.record_data:

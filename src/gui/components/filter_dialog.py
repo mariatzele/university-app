@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tktooltip import ToolTip
 from data import Operators
 from data import (
     StudentRepository,
@@ -95,8 +95,12 @@ class FilterDialog(tk.Toplevel):
         cancel_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
         cancel_button.pack(side="right", padx=5)
 
-    def remove_filters(self):
-        pass
+        apply_button.bind("<Return>", lambda event: self.apply_filters())
+        cancel_button.bind("<Return>", lambda event: self.destroy())
+
+        ToolTip(widget=apply_button, msg="Load filtered data into "
+                                              "table view", delay=1.0)
+        ToolTip(widget=cancel_button, msg="Cancel", delay=1.0)
 
     def apply_filters(self):
         self.apply_filter_callback(self.filters)

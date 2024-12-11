@@ -20,7 +20,7 @@ class StaffRepository(BaseRepository):
             "ID": "staff.id",
             "Name": "staff.name",
             "Department": "staff.department_name",
-            "Academic staff": f"{self.field_to_boolean("staff.academic_staff", "YES", "NO")}",
+            "Academic staff": f"{self.field_to_boolean('staff.academic_staff', 'YES', 'NO')}",
         }
         return mappings
 
