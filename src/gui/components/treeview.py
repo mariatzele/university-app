@@ -6,12 +6,12 @@ sys.path.append(
 )
 from tkinter import ttk
 from PIL import Image, ImageTk
-from metadata import MetadataProvier
 
 
 class TreeView:
     def __init__(
         self,
+        metadata,
         primary,
         active_table,
         table_change_callback,
@@ -22,7 +22,7 @@ class TreeView:
         self.active_table = active_table
         self.table_change_callback = table_change_callback
         self.checkbox_change_callback = checkbox_change_callback
-        self.table_metadata = MetadataProvier().get_all_table_metadata()
+        self.table_metadata = metadata.get_all_table_metadata()
         self.checked_boxes = checked_boxes
 
         # Path for images
@@ -39,14 +39,14 @@ class TreeView:
 
         # Create and configure a frame to hold the Treeview
         self.frame = ttk.Frame(self.primary)
-        self.frame.grid(row=2, column=0, padx=20, pady=0, sticky="nsew")
+        self.frame.grid(row=2, column=0, padx=10, pady=0, sticky="nsew")
         self.frame.grid_rowconfigure(0, weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
 
         # Create the Treeview widget with height parameter
         # Q: should this function be run under init?
         self.treeview = ttk.Treeview(self.frame, height=21)
-        self.treeview.column("#0", width=100, anchor="w")
+        self.treeview.column("#0", width=40, anchor="w")
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
 
         # Place the Treeview using grid
@@ -63,38 +63,6 @@ class TreeView:
         item = self.treeview.selection()
         if item:
             self.table_change_callback(self.treeview.item(item[0], "text"))
-
-    def select_table(self):
-        """
-        Returns a dictionary with keys "table_name" and "column_names".
-        "column_names" is a list of columns selected in the treeview.
-        Dictionary is passed to the listview.
-        """
-
-        # Need to add dialog pop-up
-
-        # Find parent ID of selected item
-        current_node = self.treeview.focus()
-        if current_node == "":
-            return
-        parent_id = self.treeview.parent(current_node)
-        if parent_id == "":
-            parent_id = current_node
-
-        # Get checked/selected child nodes from treeview
-        child_ids = [
-            item
-            for item in self.treeview.get_children(parent_id)
-            if "checked" in self.treeview.item(item, "tags")
-        ]
-
-        # Get table and column names
-        child_names = [self.treeview.item(child_id, "text") for child_id in child_ids]
-        parent_name = self.treeview.item(parent_id, "text")
-
-        # Create a dictionary of results to pass to the listview
-        table_metadata = {"table_name": parent_name, "column_names": child_names}
-        return table_metadata
 
     def insert_nodes(self):
         """
@@ -113,8 +81,7 @@ class TreeView:
             )
 
             # Insert child nodes under the parent
-            for child in children:
-                is_checked = True if child in self.checked_boxes else False
+            for child, is_checked in self.checked_boxes:
                 self.treeview.insert(
                     parent_id,
                     "end",

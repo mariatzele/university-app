@@ -6,9 +6,11 @@ from data import (
     DepartmentRepository,
     LecturerRepository,
     StaffRepository,
+    ProgramRepository,
+    BaseRepository,
     Filter,
 )
-from metadata import MetadataProvier
+from metadata import MetadataProvider
 
 
 class App:
@@ -19,20 +21,27 @@ class App:
         lecturer_repo: LecturerRepository,
         department_repo: DepartmentRepository,
         staff_repo: StaffRepository,
+        program_repo: ProgramRepository,
     ):
         self.student_repo = student_repo
         self.course_repo = course_repo
         self.lecturer_repo = lecturer_repo
         self.department_repo = department_repo
         self.staff_repo = staff_repo
+        self.program_repo = program_repo
         # stores current table name and columns
         self.current_table = None
         self.active_table = "students"
         self.active_filter = Filter()
-        self.checked_boxes = MetadataProvier().get_table_metadata(self.active_table)[
-            "column_names"
-        ]
+        self.metadata_provider = MetadataProvider(
+            student_repo=student_repo,
+            course_repo=course_repo,
+            lecturer_repo=lecturer_repo,
+            department_repo=department_repo,
+            staff_repo=staff_repo,
+        )
 
+        self.reset_checkboxes()
         self.build_app()  # Initialize the app window (self.app)
 
     def start(self):
@@ -78,6 +87,7 @@ class App:
         )
         # Create the Treeview widget and add it to the main frame
         self.treeview = TreeView(
+            self.metadata_provider,
             self.app,
             self.active_table,
             self.set_active_table,
@@ -115,6 +125,7 @@ class App:
         # Create and display the ListView with the table metadata
         self.listview = ListView(self.app, self.checked_boxes, self.get_data())
         self.treeview = TreeView(
+            self.metadata_provider,
             self.app,
             self.active_table,
             self.set_active_table,
@@ -129,43 +140,48 @@ class App:
         selected table metadata.
         Then it opens the FilterDialog with the retrieved metadata.
         """
-        FilterDialog(self.app, self.active_table, self.handle_filter_apply)
+        FilterDialog(
+            self.app,
+            self.active_table,
+            self.handle_filter_apply,
+            student_repo=self.student_repo,
+            course_repo=self.course_repo,
+            lecturer_repo=self.lecturer_repo,
+            department_repo=self.department_repo,
+            staff_repo=self.staff_repo,
+            program_repo=self.program_repo,
+        )
 
     def apply_search(self):
         query = self.search_var.get().lower()
         self.listview.filter_data(query)
 
     def get_data(self):
+        repo = self.get_repo_for_active_table()
+        if not repo:
+            return []
+
+        fields = [column for (column, _) in self.checked_boxes]
+        return repo.search(self.active_filter, repo.map_fields(fields))
+
+    def get_repo_for_active_table(self) -> BaseRepository:
         if self.active_table == "students":
-            return self.student_repo.search(
-                self.active_filter, self.student_repo.map_fields(self.checked_boxes)
-            )
+            return self.student_repo
         elif self.active_table == "courses":
-            return self.course_repo.search(
-                self.active_filter, self.course_repo.map_fields(self.checked_boxes)
-            )
+            return self.course_repo
         elif self.active_table == "departments":
-            return self.department_repo.search(
-                self.active_filter, self.department_repo.map_fields(self.checked_boxes)
-            )
+            return self.department_repo
         elif self.active_table == "staff":
-            return self.staff_repo.search(
-                self.active_filter, self.staff_repo.map_fields(self.checked_boxes)
-            )
-        return []
+            return self.staff_repo
+        elif self.active_table == "lecturers":
+            return self.lecturer_repo
+        else:
+            return None
 
     def handle_filter_apply(self, filters):
         # map filters to table values
         filter = Filter()
-        repo = None
-        if self.active_table == "students":
-            repo = self.student_repo
-        if self.active_table == "courses":
-            repo = self.course_repo
-        if self.active_table == "departments":
-            repo = self.department_repo
-        if self.active_table == "staff":
-            repo = self.staff_repo
+        repo = self.get_repo_for_active_table()
         if not repo:
             return  # no matching repo found to query
 
@@ -193,10 +209,10 @@ class App:
         if parent_name != self.active_table:
             self.set_active_table(parent_name)
             return
-        if checkbox_name in self.checked_boxes:
-            self.checked_boxes.remove(checkbox_name)
-        else:
-            self.checked_boxes.append(checkbox_name)
+        for i in range(0, len(self.checked_boxes)):
+            column, is_checked = self.checked_boxes[i]
+            if column == checkbox_name:
+                self.checked_boxes[i] = (column, not is_checked)
         self.reload_table()  # updated fields need to reload data
 
     def set_active_table(self, table):
@@ -215,7 +231,11 @@ class App:
         if prev != self.active_table:
             self.active_filter = Filter()  # clear filter
             # set all checkboxes to true
-            self.checked_boxes = MetadataProvier().get_table_metadata(
-                self.active_table
-            )["column_names"]
+            self.reset_checkboxes()
             self.reload_table()
+
+    def reset_checkboxes(self):
+        columns = self.metadata_provider.get_table_metadata(self.active_table)[
+            "column_names"
+        ]
+        self.checked_boxes = [(column, True) for column in columns]

@@ -1,12 +1,58 @@
 import tkinter as tk
+from tkinter import ttk
 from data import Operators
+from data import (
+    StudentRepository,
+    CourseRepository,
+    DepartmentRepository,
+    LecturerRepository,
+    StaffRepository,
+    ProgramRepository,
+    Filter,
+)
 
 
 class FilterDialog(tk.Toplevel):
-    def __init__(self, parent, active_table, apply_filter_callback):
+    def __init__(
+        self,
+        parent,
+        active_table,
+        apply_filter_callback,
+        student_repo: StudentRepository,
+        course_repo: CourseRepository,
+        lecturer_repo: LecturerRepository,
+        department_repo: DepartmentRepository,
+        staff_repo: StaffRepository,
+        program_repo: ProgramRepository,
+    ):
+        self.student_repo = student_repo
+        self.course_repo = course_repo
+        self.lecturer_repo = lecturer_repo
+        self.department_repo = department_repo
+        self.staff_repo = staff_repo
+        self.program_repo = program_repo
+
         self.active_table = active_table
         self.apply_filter_callback = apply_filter_callback
         self.filters = {"conditions": {}, "aggregates": {}}
+
+        # load data
+        lecturers = self.lecturer_repo.search(
+            filter=Filter(), fields=["lecturers.id", "lecturers.name"]
+        )
+        self.lecturers = [(lecturer["id"], lecturer["name"]) for lecturer in lecturers]
+
+        programs = self.program_repo.search(
+            filter=Filter(), fields=["programs.id", "programs.name"]
+        )
+        self.programs = [(program["id"], program["name"]) for program in programs]
+
+        departments = self.department_repo.search(
+            filter=Filter(), fields=["departments.id", "departments.name"]
+        )
+        self.departments = [
+            (department["id"], department["name"]) for department in departments
+        ]
 
         super().__init__(parent)  # Create a Toplevel window
         self.title("Filter Options")
@@ -23,6 +69,8 @@ class FilterDialog(tk.Toplevel):
             self.init_department_filters()
         elif active_table == "staff":
             self.init_staff_filters()
+        elif active_table == "lecturers":
+            self.init_lecturer_filters()
         else:
             raise ValueError("invalid table name " + active_table)
 
@@ -52,6 +100,32 @@ class FilterDialog(tk.Toplevel):
         var.trace_add("write", callback)
         return widget
 
+    def create_dropdown(self, parent_frame, data_list, label, callback):
+        # Create the label for the dropdown
+        tk.Label(parent_frame, text=label).pack(side="left", padx=5)
+
+        selected_value = tk.StringVar()
+
+        data_dict = {name: data_id for data_id, name in data_list}
+
+        def on_item_selected(*args):
+            selected_name = selected_value.get()
+            data_id = data_dict.get(selected_name)
+            if data_id is not None:
+                callback(data_id)
+
+        dropdown = tk.OptionMenu(
+            parent_frame,
+            selected_value,
+            *[name for _, name in data_list],
+        )
+        dropdown.pack(pady=5)
+
+        selected_value.trace_add("write", on_item_selected)
+        selected_value.set(f"Select a {label.lower()}")
+
+        return selected_value
+
     def init_student_filters(self):
         # Name Filter
         name_filter = tk.StringVar()
@@ -79,16 +153,15 @@ class FilterDialog(tk.Toplevel):
             ),
         )
 
-        # Advised by Lecturer ID Filter
-        lecturer_filter = tk.StringVar()
+        # Advised by Lecturer Filter
         lecturer_frame = tk.Frame(self)
         lecturer_frame.pack(pady=10)
-        self.create_filter(
+        self.create_dropdown(
             lecturer_frame,
-            "Advised by Lecturer ID:",
-            lecturer_filter,
-            lambda *args: self.filters["conditions"].update(
-                {"advised_by_lecturer_id": (Operators.EQ, int(lecturer_filter.get()))}
+            self.lecturers,
+            "Advised by",
+            lambda lecturer_id: self.filters["conditions"].update(
+                {"advised_by_lecturer_id": (Operators.EQ, lecturer_id)}
             ),
         )
 
@@ -105,16 +178,16 @@ class FilterDialog(tk.Toplevel):
             ),
         )
 
-        # Program ID Filter
+        # Program Filter
         program_filter = tk.StringVar()
         program_frame = tk.Frame(self)
         program_frame.pack(pady=10)
-        self.create_filter(
+        self.create_dropdown(
             program_frame,
-            "Program ID:",
-            program_filter,
-            lambda *args: self.filters["conditions"].update(
-                {"program_id": (Operators.EQ, int(program_filter.get()))}
+            self.programs,
+            "Program",
+            lambda program_id: self.filters["conditions"].update(
+                {"program_id": (Operators.EQ, program_id)}
             ),
         )
 
@@ -181,29 +254,27 @@ class FilterDialog(tk.Toplevel):
             ),
         )
 
-        # Lecturer ID
-        lecturer_filter = tk.StringVar()
+        # Lecturer
         lecturer_frame = tk.Frame(self)
         lecturer_frame.pack(pady=10)
-        self.create_filter(
+        self.create_dropdown(
             lecturer_frame,
-            "Lecturer ID:",
-            lecturer_filter,
-            lambda *args: self.filters["conditions"].update(
-                {"lecturer_id": (Operators.EQ, int(lecturer_filter.get()))}
+            self.lecturers,
+            "Lecturer",
+            lambda lecturer_id: self.filters["conditions"].update(
+                {"lecturer_id": (Operators.EQ, lecturer_id)}
             ),
         )
 
-        # Department ID
-        department_filter = tk.StringVar()
+        # Department
         department_frame = tk.Frame(self)
         department_frame.pack(pady=10)
-        self.create_filter(
+        self.create_dropdown(
             department_frame,
-            "Department ID:",
-            department_filter,
-            lambda *args: self.filters["conditions"].update(
-                {"department_id": (Operators.EQ, int(department_filter.get()))}
+            self.departments,
+            "Department",
+            lambda department_id: self.filters["conditions"].update(
+                {"department_id": (Operators.EQ, department_id)}
             ),
         )
 
@@ -279,16 +350,15 @@ class FilterDialog(tk.Toplevel):
             ),
         )
 
-        # Department ID
-        department_filter = tk.StringVar()
+        # Department
         department_frame = tk.Frame(self)
         department_frame.pack(pady=10)
-        self.create_filter(
+        self.create_dropdown(
             department_frame,
-            "Department ID:",
-            department_filter,
-            lambda *args: self.filters["conditions"].update(
-                {"department_id": (Operators.EQ, int(department_filter.get()))}
+            self.departments,
+            "Department",
+            lambda department_id: self.filters["conditions"].update(
+                {"department_id": (Operators.EQ, department_id)}
             ),
         )
 
@@ -328,3 +398,83 @@ class FilterDialog(tk.Toplevel):
             ),
         )
         academic_staff_checkbox.pack(side="left", padx=5)
+
+    def init_lecturer_filters(self):
+        # Name Filter
+        name_filter = tk.StringVar()
+        name_frame = tk.Frame(self)
+        name_frame.pack(pady=10)
+        self.create_filter(
+            name_frame,
+            "Search for name like:",
+            name_filter,
+            lambda *args: self.filters["conditions"].update(
+                {"name": (Operators.LIKE, "%" + name_filter.get() + "%")}
+            ),
+        )
+
+        # Academic qualifications
+        academic_qualifications_filter = tk.StringVar()
+        academic_qualifications_frame = tk.Frame(self)
+        academic_qualifications_frame.pack(pady=10)
+        self.create_filter(
+            academic_qualifications_frame,
+            "Search for academic qualifications like:",
+            academic_qualifications_filter,
+            lambda *args: self.filters["conditions"].update(
+                {
+                    "academic_qualifications": (
+                        Operators.LIKE,
+                        "%" + academic_qualifications_filter.get() + "%",
+                    )
+                }
+            ),
+        )
+
+        # Department
+        department_frame = tk.Frame(self)
+        department_frame.pack(pady=10)
+        self.create_dropdown(
+            department_frame,
+            self.departments,
+            "Department",
+            lambda department_id: self.filters["conditions"].update(
+                {"department_id": (Operators.EQ, department_id)}
+            ),
+        )
+
+        # Expertise
+        expertise_filter = tk.StringVar()
+        expertise_frame = tk.Frame(self)
+        expertise_frame.pack(pady=10)
+        self.create_filter(
+            expertise_frame,
+            "Search for expertise like:",
+            expertise_filter,
+            lambda *args: self.filters["conditions"].update(
+                {
+                    "expertise": (
+                        Operators.LIKE,
+                        "%" + expertise_filter.get() + "%",
+                    )
+                }
+            ),
+        )
+
+        # Expertise
+        research_interests_filter = tk.StringVar()
+        research_interests_frame = tk.Frame(self)
+        research_interests_frame.pack(pady=10)
+        self.create_filter(
+            research_interests_frame,
+            "Search for research interests like:",
+            research_interests_filter,
+            lambda *args: self.filters["conditions"].update(
+                {
+                    "research_interests": (
+                        Operators.LIKE,
+                        "%" + research_interests_filter.get() + "%",
+                    )
+                }
+            ),
+        )
