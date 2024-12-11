@@ -40,7 +40,6 @@ class TreeView:
 
 
         # Create the Treeview widget with height parameter
-        # Q: should this function be run under init?
         self.treeview = ttk.Treeview(primary, height=21)
         self.treeview.column("#0", width=100, anchor="w")
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
@@ -66,9 +65,6 @@ class TreeView:
         "column_names" is a list of columns selected in the treeview.
         Dictionary is passed to the listview.
         """
-
-        # Need to add dialog pop-up
-
         # Find parent ID of selected item
         current_node = self.treeview.focus()
         if current_node == "":
