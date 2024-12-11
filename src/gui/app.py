@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 from gui.components import TreeView, ListView, FilterDialog
 from data import (
     StudentRepository,
@@ -49,69 +48,47 @@ class App:
         self.app.mainloop()
 
     def build_app(self):
-        bg_colour = "#c8b9c3" # background colour
-
         # Create the main Tkinter window
         self.app = tk.Tk()
         self.app.geometry("1200x600")
         self.app.title("Dashboard")
-        self.app.configure(bg=bg_colour)
 
         # Configure grid layout
-        self.app.grid_rowconfigure(0, weight=1, minsize=50)  # header
+        self.app.grid_rowconfigure(0, weight=0)  # Dashboard header
         self.app.grid_rowconfigure(1, weight=0)  # Top bar
         self.app.grid_rowconfigure(2, weight=1)  # Main content row
         self.app.grid_columnconfigure(1, weight=4)  # Main content column
         self.app.grid_columnconfigure(0, weight=1)  # Sidebar column
-        self.app.grid_rowconfigure(0, weight=1) # Sidebar row
+        self.app.grid_rowconfigure(0, weight=1)  # Sidebar row
         self.app.grid_rowconfigure(3, weight=0)  # Footer bar row
 
         # Dashboard header
-        db_colour = "#4f064a"
         # Create a frame for the header (row 0)
-        self.header = tk.Frame(self.app, bg=db_colour)
-        self.header.grid(row=0, column=0, columnspan=2, sticky="ew")
-
-
-        # Add content to the dashboard 
-        header_logo = tk.Label(self.header, text="ABC UNIVERSITY", fg="white",
-                               bg=db_colour, font=("Arial", 16))
-        header_label = tk.Label(self.header, text="Dashboard", fg="white",
-                                bg=db_colour, font=("Arial", 16))
-        header_logo.pack(padx=10, pady=10, side="left")
-        header_label.pack(padx=10, pady=10, side="left")
+        self.top_bar = tk.Frame(self.app, bg="gray", height=40)
+        self.top_bar.grid(row=0, column=0, columnspan=2, sticky="ew")
+        # Add content to the top bar
+        top_bar_label = tk.Label(
+            self.top_bar, text="Dashboard", fg="white", bg="gray", font=("Arial", 16)
+        )
+        top_bar_label.pack(padx=10, pady=5, side="left")
 
         # Top bar
         # Create a frame for the search bar and filter button (row 1 column 1)
-        self.top_bar_frame = tk.Frame(self.app, bg=bg_colour)
-        self.top_bar_frame.grid(row=1, column=1, columnspan=1, padx=20,
-                                pady=10, sticky="ew")
-
+        self.top_bar_frame = tk.Frame(self.app)
+        self.top_bar_frame.grid(
+            row=1, column=1, columnspan=1, padx=20, pady=10, sticky="ew"
+        )
 
         # Main frame
         # Create a main frame (row 2)
-        self.main_frame = tk.Frame(self.app, borderwidth=2, height=100,
-                                   bg=bg_colour)
-        self.main_frame.grid(row=2, column=0, columnspan=2, padx=20,
-                             pady=20, sticky="nsew")
-
-        # Configure ttk style
-        self.style = ttk.Style()
-        self.style.theme_use('clam')
-        self.style.configure('Treeview.Frame', background=bg_colour)
-        self.style.configure('TFrame', background=bg_colour)
-
-        # Create and configure a frame to hold the Treeview
-        self.frame = ttk.Frame(self.app)
-        self.frame.grid(row=2, column=0, padx=20, pady=0, sticky="nsew")
-        self.frame.grid_rowconfigure(0, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-
+        self.main_frame = tk.Frame(self.app, borderwidth=2, height=100)
+        self.main_frame.grid(
+            row=2, column=0, columnspan=2, padx=20, pady=20, sticky="nsew"
+        )
         # Create the Treeview widget and add it to the main frame
         self.treeview = TreeView(
-
-            self.frame,
-
+            self.metadata_provider,
+            self.app,
             self.active_table,
             self.set_active_table,
             self.handle_checkbox,
@@ -122,8 +99,11 @@ class App:
 
         # Footer
         # Create a frame for the footer bar (row 3)
-        self.footer_bar = tk.Frame(self.app, height=40, bg=bg_colour)
-        self.footer_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
+        self.footer_bar = tk.Frame(self.app, height=30)
+        self.footer_bar.grid(row=3, column=1, columnspan=2, sticky="ew")
+        # Create a frame for the apply button (row 3 column 0)
+        self.footer_bar = tk.Frame(self.app)
+        self.footer_bar.grid(row=3, column=0, padx=20, pady=5, sticky="ew")
 
         # Add the filter button
         self.filter_button = tk.Button(
@@ -145,9 +125,8 @@ class App:
         # Create and display the ListView with the table metadata
         self.listview = ListView(self.app, self.checked_boxes, self.get_data())
         self.treeview = TreeView(
-
-            self.frame,
-
+            self.metadata_provider,
+            self.app,
             self.active_table,
             self.set_active_table,
             self.handle_checkbox,
