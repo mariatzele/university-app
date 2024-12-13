@@ -11,6 +11,10 @@ class LecturerRepository(BaseRepository):
         super().__init__(db, "lecturers")
 
     def get_field_mappings(self):
+        """
+        returns a dictionary that maps human-readable field names to SQL
+        database fields
+        """
         mappings = {
             "ID": "lecturers.id",
             "Name": "lecturers.name",
@@ -37,9 +41,8 @@ class LecturerRepository(BaseRepository):
         return mappings
 
     def get_joins(self):
-        # Important! We need the join to `programs` because we will then get the
-        # employees who supervise student employees in a particular program.
-        # We get this through: Program -> Student -> Advised By (Lecturer)
+        """Returns string containing SQL JOIN statements allowing the
+        application to make database queries"""
         return """
             LEFT JOIN students ON students.advised_by_lecturer_id = lecturers.id
             LEFT JOIN departments ON departments.id = lecturers.department_id

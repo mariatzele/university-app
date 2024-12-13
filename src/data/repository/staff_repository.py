@@ -16,6 +16,10 @@ class StaffRepository(BaseRepository):
         super().__init__(db, "staff")
 
     def get_field_mappings(self):
+        """
+        returns a dictionary that maps human-readable field names to SQL
+        database fields
+        """
         mappings = {
             "ID": "staff.id",
             "Name": "staff.name",

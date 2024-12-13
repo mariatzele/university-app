@@ -29,7 +29,7 @@ class DB:
             raise Exception(f"Error connecting to database: {e}")
 
     def close(self):
-        """Disconnect frmo database."""
+        """Disconnect from database."""
         if self.connection and self.connection.is_connected():
             self.connection.close()
 

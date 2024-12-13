@@ -1,4 +1,3 @@
-"""app.py"""
 import tkinter as tk
 from tkinter import ttk
 from tktooltip import ToolTip
@@ -65,9 +64,6 @@ class App:
         self.reset_checkboxes()
         self.build_app()  # Initialize the app window (self.app)
 
-    def start(self):
-        """Starts the application"""
-        self.app.mainloop()
 
     def build_app(self):
         """
@@ -128,23 +124,6 @@ class App:
         self.frame.grid(row=2, column=0, padx=20, pady=0, sticky="nsew")
         self.frame.grid_rowconfigure(0, weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        # Footer
-        # Create a frame for the footer bar (row 3)
-        self.footer_bar = tk.Frame(self.app, height=40, bg=bg_colour)
-        self.footer_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
-
-        # Add the filter button
-        self.filter_button = ttk.Button(self.top_bar_frame,
-                                        text="Filter",
-                                        command=self.apply_filter)
-        self.filter_button.pack(padx=10, pady=5, side="right")
-
-        # Key bindings
-        self.filter_button.bind("<Return>",
-                                lambda event: self.apply_filter())
-
-        # ToolTips
-        ToolTip(widget=self.filter_button, msg="Filter table", delay=1.0)
 
         # Create the Treeview widget and add it to the main frame
         self.treeview = TreeView(
@@ -158,6 +137,22 @@ class App:
         # Create the ListView widget and add it to the main frame
         self.listview = ListView(self.app, self.checked_boxes, self.get_data())
 
+        # Footer
+        # Create a frame for the footer bar (row 3)
+        self.footer_bar = tk.Frame(self.app, height=40, bg=bg_colour)
+        self.footer_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
+
+        # Add the filter button
+        self.filter_button = ttk.Button(self.top_bar_frame,
+                                        text="Filter", command=self.apply_filter)
+        self.filter_button.pack(padx=10, pady=5, side="right")
+
+        # Key bindings
+        self.filter_button.bind("<Return>",
+                                lambda event: self.apply_filter())
+
+        # ToolTips
+        ToolTip(widget=self.filter_button, msg="Filter table", delay=1.0)
 
     def reload_table(self):
         """
