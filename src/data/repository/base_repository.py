@@ -18,6 +18,7 @@ class BaseRepository:
         return result[0] if result else None
 
     def map_fields(self, fields):
+
         mappings = self.get_field_mappings()
         return [
             f"{mappings[field]} as `{field}`" for field in fields if field in mappings
@@ -67,7 +68,7 @@ class BaseRepository:
         if limit:
             query += f" LIMIT {limit}"
 
-        # Log queries before being execute - helps for debugging
+        # Log queries before being executed - helps for debugging
         print("==================")
         print("Executing Query: ")
         print(sqlparse.format(query, reindent=True, keyword_case="upper"))

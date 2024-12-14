@@ -1,3 +1,4 @@
+# treeview.py
 import os
 import sys
 
@@ -9,6 +10,10 @@ from PIL import Image, ImageTk
 
 
 class TreeView:
+    """
+    This class builds and displays the Tree View widget. It displays the
+    tables and their columns and allows checkboxes to be toggled.
+    """
     def __init__(
         self,
         metadata,
@@ -46,7 +51,7 @@ class TreeView:
         self.treeview.bind("<ButtonRelease-1>", self.handle_node_click)
 
         # Place the Treeview using grid
-        self.treeview.grid(row=2, column=0, sticky="nsew")
+        self.treeview.grid(row=0, column=0, sticky="nsew")
         # Set column headings
         self.treeview.heading("#0", text="Tables")
 
@@ -56,21 +61,21 @@ class TreeView:
         self.treeview.bind("<Button-1>", self.toggle_checkbox)
 
     def handle_node_click(self, event):
+        """alters table based on node click"""
         item = self.treeview.selection()
         if item:
             self.table_change_callback(self.treeview.item(item[0], "text"))
 
     def insert_nodes(self):
         """
-        Insert nodes into the TreeView from table metadata.
+        Insert nodes into the TreeView from MetadataProvider class.
         A list of dictionaries where each dictionary has "table_name" as the
         parent and "column_names" as the children.
         """
         for metadata in self.table_metadata:
-            # Extract the table name (parent) and column names (children)
+            # Extract the table name (parent)
             parent = metadata.get("table_name")
             children = metadata.get("column_names")
-
             # Insert parent node
             parent_id = self.treeview.insert(
                 "", "end", text=parent, open=parent == self.active_table
@@ -87,6 +92,7 @@ class TreeView:
                 )
 
     def toggle_checkbox(self, event):
+        """Identifies toggled checkbox and its parent table"""
         # Identify the clicked row
         item = self.treeview.identify_row(event.y)
         # Exit if no valid row was clicked

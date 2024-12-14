@@ -1,3 +1,4 @@
+"""app.py"""
 import tkinter as tk
 from tkinter import ttk
 from tktooltip import ToolTip
@@ -17,6 +18,11 @@ from metadata import MetadataProvider
 
 
 class App:
+    """
+    The main application class for managing the University Records Database.
+    It initializes the GUI components and manages the interactions between
+    the repositories and the interface.
+    """
     def __init__(
         self,
         student_repo: StudentRepository,
@@ -26,6 +32,18 @@ class App:
         staff_repo: StaffRepository,
         program_repo: ProgramRepository,
     ):
+        """
+       Initializes the App with the required repositories.
+
+       Parameters:
+           student_repo (StudentRepository): Repository for student data.
+           course_repo (CourseRepository): Repository for course data.
+           lecturer_repo (LecturerRepository): Repository for lecturer data.
+           department_repo (DepartmentRepository): Repository for department data.
+           staff_repo (StaffRepository): Repository for staff data.
+           program_repo (ProgramRepository): Repository for program data.
+       """
+
         self.student_repo = student_repo
         self.course_repo = course_repo
         self.lecturer_repo = lecturer_repo
@@ -48,9 +66,14 @@ class App:
         self.build_app()  # Initialize the app window (self.app)
 
     def start(self):
+        """Starts the application"""
         self.app.mainloop()
 
     def build_app(self):
+        """
+        Builds the GUI components for the application, including the main window,
+        header, top bar, main frame, and footer.
+        """
         bg_colour = "#c8b9c3" # background colour
 
         # Create the main Tkinter window
@@ -105,6 +128,23 @@ class App:
         self.frame.grid(row=2, column=0, padx=20, pady=0, sticky="nsew")
         self.frame.grid_rowconfigure(0, weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
+        # Footer
+        # Create a frame for the footer bar (row 3)
+        self.footer_bar = tk.Frame(self.app, height=40, bg=bg_colour)
+        self.footer_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
+
+        # Add the filter button
+        self.filter_button = ttk.Button(self.top_bar_frame,
+                                        text="Filter",
+                                        command=self.apply_filter)
+        self.filter_button.pack(padx=10, pady=5, side="right")
+
+        # Key bindings
+        self.filter_button.bind("<Return>",
+                                lambda event: self.apply_filter())
+
+        # ToolTips
+        ToolTip(widget=self.filter_button, msg="Filter table", delay=1.0)
 
         # Create the Treeview widget and add it to the main frame
         self.treeview = TreeView(
@@ -118,26 +158,11 @@ class App:
         # Create the ListView widget and add it to the main frame
         self.listview = ListView(self.app, self.checked_boxes, self.get_data())
 
-        # Footer
-        # Create a frame for the footer bar (row 3)
-        self.footer_bar = tk.Frame(self.app, height=40, bg=bg_colour)
-        self.footer_bar.grid(row=3, column=0, columnspan=2, sticky="ew")
-
-        # Add the filter button
-        self.filter_button = ttk.Button(self.top_bar_frame,
-                                        text="Filter", command=self.apply_filter)
-        self.filter_button.pack(padx=10, pady=5, side="right")
-
-        # Key bindings
-        self.filter_button.bind("<Return>",
-                                lambda event: self.apply_filter())
-
-        # ToolTips
-        ToolTip(widget=self.filter_button, msg="Filter table", delay=1.0)
 
     def reload_table(self):
         """
-        This method reloads the data for the table
+        Reloads the data for the table by destroying and recreating the
+        ListView and TreeView widgets.
         """
         # Destroy the existing ListView before creating a new one
         if self.listview:
@@ -158,12 +183,7 @@ class App:
         )
 
     def apply_filter(self):
-        """
-        This method is triggered when the filter button is clicked.
-        It calls the table_selection method from TreeView, which gets the
-        selected table metadata.
-        Then it opens the FilterDialog with the retrieved metadata.
-        """
+        """ Opens the FilterDialog with table, filter and repo data """
         FilterDialog(
             self.app,
             self.active_table,
@@ -177,6 +197,10 @@ class App:
         )
 
     def get_data(self):
+        """
+        Retrieves data from the active repository.
+        Returns repo data with filtered columns
+        """
         repo = self.get_repo_for_active_table()
         if not repo:
             return []
@@ -185,6 +209,9 @@ class App:
         return repo.search(self.active_filter, repo.map_fields(fields))
 
     def get_repo_for_active_table(self) -> BaseRepository:
+        """
+        Returns the repository corresponding to the currently active table.
+        """
         if self.active_table == "students":
             return self.student_repo
         elif self.active_table == "courses":
@@ -199,6 +226,7 @@ class App:
             return None
 
     def handle_filter_apply(self, filters):
+        """Applies filters and reloads the table with filtered data."""
         # map filters to table values
         filter = Filter()
         repo = self.get_repo_for_active_table()
@@ -227,6 +255,7 @@ class App:
         self.reload_table()
 
     def handle_checkbox(self, checkbox_name, parent_name):
+        """ Resets checkboxes and active table """
         # this checkbox belongs to different table - update the list first
         if parent_name != self.active_table:
             self.set_active_table(parent_name)
@@ -238,6 +267,11 @@ class App:
         self.reload_table()  # updated fields need to reload data
 
     def set_active_table(self, table):
+        """
+        Sets the active table for operations. If the new active table is
+        different from the current one, it resets the active filter, resets
+        checkboxes, and reloads the table.
+        """
         prev = self.active_table
         if table == "students":
             self.active_table = "students"
@@ -257,6 +291,7 @@ class App:
             self.reload_table()
 
     def reset_checkboxes(self):
+        """resets checkboxes for active table"""
         columns = self.metadata_provider.get_table_metadata(self.active_table)[
             "column_names"
         ]
