@@ -13,6 +13,10 @@ from data import (
 
 
 class FilterDialog(tk.Toplevel):
+    """
+    A dialog window for applying filters to various data tables.
+    Allows users to filter data using dynamic criteria.
+    """
     def __init__(
         self,
         parent,
@@ -103,19 +107,29 @@ class FilterDialog(tk.Toplevel):
         ToolTip(widget=cancel_button, msg="Cancel", delay=1.0)
 
     def apply_filters(self):
+        """
+        Apply the current filters and close the dialog.
+        """
         self.apply_filter_callback(self.filters)
         self.destroy()
 
     def create_filter(
         self, frame, label_text, var, callback, widget_class=tk.Entry, **widget_options
-    ):
+        ):
+        """
+        Create a labeled input widget for filter criteria.
+        """
         tk.Label(frame, text=label_text).pack(side="left", padx=5)
         widget = widget_class(frame, textvariable=var, **widget_options)
         widget.pack(side="left", padx=5)
         var.trace_add("write", callback)
         return widget
 
+
     def create_dropdown(self, parent_frame, data_list, label, callback):
+        """
+        Create a dropdown menu for selecting filter options.
+        """
         # Create the label for the dropdown
         tk.Label(parent_frame, text=label).pack(side="left", padx=5)
 
@@ -142,6 +156,9 @@ class FilterDialog(tk.Toplevel):
         return selected_value
 
     def init_student_filters(self):
+        """
+        Initialize and display filters for student data.
+        """
         # Name Filter
         name_filter = tk.StringVar()
         name_frame = tk.Frame(self)
@@ -227,7 +244,8 @@ class FilterDialog(tk.Toplevel):
             avg_grade_filter,
             lambda *args: self.filters["aggregates"].update(
                 {
-                    "student_enrollments.grade": (  # can't use avg_grade here because it's in the SELECT
+                    # can't use avg_grade here because it's in the SELECT
+                    "student_enrollments.grade": (
                         "AVG",
                         Operators.GT,
                         int(avg_grade_filter.get()),
@@ -254,6 +272,9 @@ class FilterDialog(tk.Toplevel):
         grad_status_checkbox.pack(side="left", padx=5)
 
     def init_course_filters(self):
+        """
+        Initialize and display filters for course data.
+        """
         # Name Filter
         name_filter = tk.StringVar()
         name_frame = tk.Frame(self)
@@ -331,6 +352,9 @@ class FilterDialog(tk.Toplevel):
         )
 
     def init_department_filters(self):
+        """
+        Initialize and display filters for department data.
+        """
         # Name Filter
         name_filter = tk.StringVar()
         name_frame = tk.Frame(self)
@@ -363,6 +387,9 @@ class FilterDialog(tk.Toplevel):
         )
 
     def init_staff_filters(self):
+        """
+        Initialize and display filters for staff data.
+        """
         # Name Filter
         name_filter = tk.StringVar()
         name_frame = tk.Frame(self)
@@ -426,6 +453,9 @@ class FilterDialog(tk.Toplevel):
         academic_staff_checkbox.pack(side="left", padx=5)
 
     def init_lecturer_filters(self):
+        """
+        Initialize and display filters for lecturer data.
+        """
         # Name Filter
         name_filter = tk.StringVar()
         name_frame = tk.Frame(self)

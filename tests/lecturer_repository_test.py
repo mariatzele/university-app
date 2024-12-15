@@ -6,7 +6,7 @@ load_dotenv()
 
 
 class TestLecturerRepository(unittest.TestCase):
-
+    """Tests the lecturer repository by running filters"""
     def setUp(self):
         db = DB()
         self.repo = LecturerRepository(db)
@@ -43,7 +43,7 @@ class TestLecturerRepository(unittest.TestCase):
             filter=None,
             fields=["lecturers.*", "COUNT(research_projects.id) as projects_count"],
             limit=3,  # top 3 lecturers with most projects
-            orderBy="projects_count DESC",
+            order_by="projects_count DESC",
         )
         self.assertIsInstance(results, list)
         self.assertEqual(len(results), 3)

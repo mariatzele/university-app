@@ -1,3 +1,4 @@
+"""student_repository.py"""
 from ..db import DB
 from .base_repository import BaseRepository
 
@@ -31,7 +32,10 @@ class StudentRepository(BaseRepository):
         return mappings
 
     def get_filter_mappings(self):
-        """"""
+        """
+        returns a dictionary that maps filter values to SQL
+        database fields
+        """
         mappings = {
             "id": "students.id",
             "name": "students.name",

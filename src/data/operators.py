@@ -1,7 +1,11 @@
+"""operators.py"""
 from enum import Enum
 
 
 class Operators(Enum):
+    """
+    manages operators and their symbolic names
+    """
     EQ = "="
     NE = "!="
     GT = ">"

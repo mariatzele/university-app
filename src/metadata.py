@@ -1,4 +1,5 @@
-# metadata.py
+"""metadata.py"""
+import copy
 from data import (
     StudentRepository,
     CourseRepository,
@@ -6,7 +7,7 @@ from data import (
     LecturerRepository,
     StaffRepository,
 )
-import copy
+
 
 
 class MetadataProvider:

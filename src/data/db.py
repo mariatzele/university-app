@@ -1,9 +1,14 @@
+"""db.py"""
+import os
 import mysql.connector
 from mysql.connector import Error
-import os
+
 
 
 class DB:
+    """
+    A class to manage database connections and operations.
+    """
     def __init__(self, connection=None):
         self.host = os.getenv("DB_HOST")
         self.port = int(os.getenv("DB_PORT", 3306))

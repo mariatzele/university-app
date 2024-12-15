@@ -1,13 +1,11 @@
-# treeview.py
+"""treeview.py"""
 import os
 import sys
-
+from tkinter import ttk
+from PIL import Image, ImageTk
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 )
-from tkinter import ttk
-from PIL import Image, ImageTk
-
 
 class TreeView:
     """
@@ -75,7 +73,7 @@ class TreeView:
         for metadata in self.table_metadata:
             # Extract the table name (parent)
             parent = metadata.get("table_name")
-            children = metadata.get("column_names")
+
             # Insert parent node
             parent_id = self.treeview.insert(
                 "", "end", text=parent, open=parent == self.active_table

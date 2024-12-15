@@ -1,3 +1,4 @@
+"""base_repository.py"""
 from ..db import DB
 from ..filter import Filter
 from typing import List
@@ -14,17 +15,25 @@ class BaseRepository:
         self.table = table
 
     def get(self, filter: Filter):
+        """
+        Retrieve a single entity that matches the search result.
+        """
         result = self.search(filter)
         return result[0] if result else None
 
     def map_fields(self, fields):
-
+        """
+        Maps field names to their database equivalents for query selection.
+        """
         mappings = self.get_field_mappings()
         return [
             f"{mappings[field]} as `{field}`" for field in fields if field in mappings
         ]
 
     def map_filters(self, filters):
+        """
+        Maps filter keys to their database equivalents.
+        """
         mappings = self.get_filter_mappings()
         return {mappings[key]: value for key, value in filters.items()}
 
@@ -33,7 +42,7 @@ class BaseRepository:
         filter: Filter = None,
         fields: List[str] = None,
         limit: int = None,
-        orderBy: str = None,
+        order_by: str = None,
     ):
         """
         Search for records based on a filter.
@@ -57,13 +66,14 @@ class BaseRepository:
         if where_clause:
             query += f" WHERE {where_clause}"
 
-        # Important! always group by the main table entity to allow for aggregations in the fields param
+        # Important! always group by the main table entity to allow for
+        # aggregations in the fields param
         query += f" GROUP BY {self.table}.id"
         if having_clause:
             query += f" {having_clause}"
 
-        if orderBy:
-            query += f" ORDER BY {orderBy}"
+        if order_by:
+            query += f" ORDER BY {order_by}"
 
         if limit:
             query += f" LIMIT {limit}"
@@ -82,16 +92,28 @@ class BaseRepository:
         return ""  # By default, no joins are added. Child classes should override this.
 
     def get_field_mappings(self):
+        """
+        Returns the default field mappings.
+        """
         mappings = {}  # no mappings by default
         return mappings
 
     def get_filter_mappings(self):
+        """
+        Returns the filter mappings, defaulting to field mappings.
+        """
         return self.get_field_mappings()
 
     def get_column_names(self):
+        """
+        Retrieves the list of column names based on field mappings.
+        """
         return list(self.get_field_mappings().keys())
 
     def field_to_boolean(self, field_name, true_value, false_value):
+        """
+        Converts a field to a boolean representation in SQL.
+        """
         return f"""
         CASE 
             WHEN {field_name} = TRUE THEN '{true_value}'

@@ -1,7 +1,6 @@
-# filter.py
-from .operators import Operators
+"""filter.py"""
 from typing import List, Tuple, Any
-
+from .operators import Operators
 
 class Filter:
     """
@@ -26,8 +25,8 @@ class Filter:
         self.conditions.append((column, operator, value))
 
     def add_aggregate_condition(
-        self, column: str, aggregate_operator: str, condition_operator: Operators, value
-    ):
+        self, column: str, aggregate_operator: str, condition_operator:
+            Operators, value):
         """
         Add an aggregate condition (for HAVING clause).
 
