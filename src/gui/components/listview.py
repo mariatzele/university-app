@@ -26,7 +26,6 @@ class ListView:
         Create and configure the list view widget based on checked columns.
         """
         columns = [column for column, is_checked in self.checked_boxes if is_checked]
-        # treeview = ttk.Treeview(self.primary, show="headings")
         # If metadata contains column info
         treeview = ttk.Treeview(self.primary, columns=columns, show="headings")
 
