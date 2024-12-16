@@ -1,4 +1,7 @@
-"""listview.py"""
+"""
+listview.py
+A module representing a Treeview-based list view widget.
+"""
 import tkinter as tk
 from tkinter import ttk
 

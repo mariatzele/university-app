@@ -1,4 +1,7 @@
-"""department_repository.py"""
+"""
+department_repository.py
+Module for managing department records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 

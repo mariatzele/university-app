@@ -1,4 +1,7 @@
-"""operators.py"""
+"""
+operators.py
+A module that manages operators and their symbolic names
+"""
 from enum import Enum
 
 

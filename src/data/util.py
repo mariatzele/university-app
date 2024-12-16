@@ -1,4 +1,7 @@
-"""util.py"""
+"""
+util.py
+A module that converts a filter dictionary into a WHERE clause for SQL queries.
+"""
 def compile_filter(filter: dict):
     """
     Convert a filter dictionary into a WHERE clause for SQL queries.

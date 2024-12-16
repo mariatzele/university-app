@@ -1,4 +1,8 @@
-"""filter.py"""
+"""
+filter.py
+A module to build complex SQL WHERE and HAVING clauses with various
+operators and aggregation conditions.
+"""
 from typing import List, Tuple, Any
 from .operators import Operators
 

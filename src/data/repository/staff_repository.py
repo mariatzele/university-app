@@ -1,4 +1,7 @@
-"""staff_repository.py"""
+"""
+staff_repository.py
+Module for managing staff records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 from ..filter import Filter

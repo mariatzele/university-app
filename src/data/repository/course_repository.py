@@ -1,4 +1,7 @@
-"""course_repository.py"""
+"""
+course_repository.py
+Module for managing course records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 

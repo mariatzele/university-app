@@ -1,3 +1,6 @@
+"""
+A module for applying filters to various data tables.
+"""
 import tkinter as tk
 from tktooltip import ToolTip
 from data import Operators

@@ -1,4 +1,7 @@
-"""base_repository.py"""
+"""
+base_repository.py
+A module that provides common database operations for entities.
+"""
 from ..db import DB
 from ..filter import Filter
 from typing import List

@@ -1,4 +1,8 @@
-"""metadata.py"""
+"""
+metadata.py
+A module to extract field names from the data stored in the
+repositories and assign it to a table name"
+"""
 import copy
 from data import (
     StudentRepository,
@@ -7,7 +11,6 @@ from data import (
     LecturerRepository,
     StaffRepository,
 )
-
 
 
 class MetadataProvider:

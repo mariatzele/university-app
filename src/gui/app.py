@@ -1,4 +1,8 @@
-"""app.py"""
+"""
+app.py
+A module that contains the main application class for managing the
+University Records Database.
+"""
 import tkinter as tk
 from tkinter import ttk
 from tktooltip import ToolTip

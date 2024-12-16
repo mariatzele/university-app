@@ -1,4 +1,7 @@
-"""db.py"""
+"""
+db.py
+A module to manage database connections and operations.
+"""
 import os
 import mysql.connector
 from mysql.connector import Error

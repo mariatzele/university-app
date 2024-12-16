@@ -1,4 +1,7 @@
-"""lecturer_repository.py"""
+"""
+lecturer_repository.py
+Module for managing lecturer records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 

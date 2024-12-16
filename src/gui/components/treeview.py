@@ -1,4 +1,7 @@
-"""treeview.py"""
+"""
+treeview.py
+A module that builds and displays the Tree View widget.
+"""
 import os
 import sys
 from tkinter import ttk
