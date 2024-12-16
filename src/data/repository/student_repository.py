@@ -1,3 +1,7 @@
+"""
+student_repository.py
+Module for managing student records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 
@@ -11,6 +15,10 @@ class StudentRepository(BaseRepository):
         super().__init__(db, "students")
 
     def get_field_mappings(self):
+        """
+        returns a dictionary that maps human-readable field names to SQL
+        database fields
+        """
         mappings = {
             "ID": "students.id",
             "Name": "students.name",
@@ -27,6 +35,10 @@ class StudentRepository(BaseRepository):
         return mappings
 
     def get_filter_mappings(self):
+        """
+        returns a dictionary that maps filter values to SQL
+        database fields
+        """
         mappings = {
             "id": "students.id",
             "name": "students.name",
@@ -43,6 +55,8 @@ class StudentRepository(BaseRepository):
         return mappings
 
     def get_joins(self):
+        """Returns string containing SQL JOIN statements allowing the
+        application to make database queries"""
         return """
             LEFT JOIN student_enrollments ON students.id = student_enrollments.student_id
             LEFT JOIN programs on students.program_id = programs.id

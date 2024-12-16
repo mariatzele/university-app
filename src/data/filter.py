@@ -1,10 +1,15 @@
-from .operators import Operators
+"""
+filter.py
+A module to build complex SQL WHERE and HAVING clauses with various
+operators and aggregation conditions.
+"""
 from typing import List, Tuple, Any
-
+from .operators import Operators
 
 class Filter:
     """
-    A class to build complex SQL WHERE and HAVING clauses with various operators and aggregation conditions.
+    A class to build complex SQL WHERE and HAVING clauses with various
+    operators and aggregation conditions.
     """
 
     def __init__(self):
@@ -24,8 +29,8 @@ class Filter:
         self.conditions.append((column, operator, value))
 
     def add_aggregate_condition(
-        self, column: str, aggregate_operator: str, condition_operator: Operators, value
-    ):
+        self, column: str, aggregate_operator: str, condition_operator:
+            Operators, value):
         """
         Add an aggregate condition (for HAVING clause).
 
@@ -42,7 +47,8 @@ class Filter:
 
     def compile(self):
         """
-        Compile the filter into a SQL WHERE clause, HAVING clause, a list of parameters, and aggregates.
+        Compile the filter into a SQL WHERE clause, HAVING clause, a list of
+        parameters, and aggregates.
 
         :return: Tuple (where_clause, having_clause, params, aggregates).
         """
@@ -55,7 +61,8 @@ class Filter:
             if operator.requires_list():
                 # Handle list-based operators (IN, NOT IN)
                 placeholders = ", ".join(["%s"] * len(value))
-                where_clauses.append(f"{column} {operator.value} ({placeholders})")
+                where_clauses.append(f"{column} {operator.value} "
+                                     f"({placeholders})")
                 params.extend(value)
             elif value is None:
                 # Handle NULL values
@@ -64,7 +71,8 @@ class Filter:
                 elif operator == Operators.NE:
                     where_clauses.append(f"{column} IS NOT NULL")
                 else:
-                    raise ValueError(f"Unsupported operator for NULL value: {operator}")
+                    raise ValueError(f"Unsupported operator for NULL value:"
+                                     f" {operator}")
             else:
                 # Handle standard operators
                 where_clauses.append(f"{column} {operator.value} %s")
@@ -78,7 +86,8 @@ class Filter:
             value,
         ) in self.aggregate_conditions:
             having_clauses.append(
-                f"HAVING {aggregate_operator}({column}) {condition_operator.value} %s"
+                f"HAVING {aggregate_operator}({column})"
+                f" {condition_operator.value} %s"
             )
             params.append(value)
 

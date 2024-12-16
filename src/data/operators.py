@@ -1,7 +1,14 @@
+"""
+operators.py
+A module that manages operators and their symbolic names
+"""
 from enum import Enum
 
 
 class Operators(Enum):
+    """
+    manages operators and their symbolic names
+    """
     EQ = "="
     NE = "!="
     GT = ">"

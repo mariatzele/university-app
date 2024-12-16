@@ -6,7 +6,7 @@ load_dotenv()
 
 
 class TestStaffRepository(unittest.TestCase):
-
+    """Tests the staff repository by running filters"""
     def setUp(self):
         db = DB()
         self.repo = StaffRepository(db)

@@ -1,9 +1,17 @@
+"""
+db.py
+A module to manage database connections and operations.
+"""
+import os
 import mysql.connector
 from mysql.connector import Error
-import os
+
 
 
 class DB:
+    """
+    A class to manage database connections and operations.
+    """
     def __init__(self, connection=None):
         self.host = os.getenv("DB_HOST")
         self.port = int(os.getenv("DB_PORT", 3306))
@@ -29,7 +37,7 @@ class DB:
             raise Exception(f"Error connecting to database: {e}")
 
     def close(self):
-        """Disconnect frmo database."""
+        """Disconnect from database."""
         if self.connection and self.connection.is_connected():
             self.connection.close()
 

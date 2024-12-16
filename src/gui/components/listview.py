@@ -1,8 +1,15 @@
+"""
+listview.py
+A module representing a Treeview-based list view widget.
+"""
 import tkinter as tk
 from tkinter import ttk
 
 
 class ListView:
+    """
+    A class representing a Treeview-based list view widget.
+    """
     def __init__(self, primary, checked_boxes, record_data):
         self.primary = primary
         self.checked_boxes = checked_boxes
@@ -15,8 +22,10 @@ class ListView:
         self.update_data()
 
     def create_listview(self):
+        """
+        Create and configure the list view widget based on checked columns.
+        """
         columns = [column for column, is_checked in self.checked_boxes if is_checked]
-        treeview = ttk.Treeview(self.primary, show="headings")
         # If metadata contains column info
         treeview = ttk.Treeview(self.primary, columns=columns, show="headings")
 
@@ -39,7 +48,7 @@ class ListView:
         """Clear and populate the Treeview with new data."""
         self.treeview.delete(*self.treeview.get_children())
         # Insert data into the Treeview
-        if self.record_data == None:
+        if self.record_data is None:
             return
         for item in self.record_data:
             column_values = [item[column] for column in self.treeview["columns"]]

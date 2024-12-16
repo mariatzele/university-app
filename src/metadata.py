@@ -1,3 +1,9 @@
+"""
+metadata.py
+A module to extract field names from the data stored in the
+repositories and assign it to a table name"
+"""
+import copy
 from data import (
     StudentRepository,
     CourseRepository,
@@ -5,10 +11,11 @@ from data import (
     LecturerRepository,
     StaffRepository,
 )
-import copy
 
 
 class MetadataProvider:
+    """A class to extract field names from the data stored in the
+    repositories and assign it to a table name"""
     def __init__(
         self,
         student_repo: StudentRepository,
@@ -47,6 +54,7 @@ class MetadataProvider:
         ]
 
     def get_table_metadata(self, table_name):
+        """Retrieves specific table metadata from list of dictionaries"""
         table_metadata = self.get_all_table_metadata()
         for i in range(0, len(table_metadata)):
             if table_metadata[i].get("table_name") == table_name:
@@ -54,4 +62,5 @@ class MetadataProvider:
         return None
 
     def get_all_table_metadata(self):
+        """Retrieves all table metadata"""
         return copy.deepcopy(self.table_metadata)

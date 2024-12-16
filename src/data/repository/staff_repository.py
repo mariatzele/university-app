@@ -1,3 +1,7 @@
+"""
+staff_repository.py
+Module for managing staff records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 from ..filter import Filter
@@ -16,6 +20,10 @@ class StaffRepository(BaseRepository):
         super().__init__(db, "staff")
 
     def get_field_mappings(self):
+        """
+        returns a dictionary that maps human-readable field names to SQL
+        database fields
+        """
         mappings = {
             "ID": "staff.id",
             "Name": "staff.name",
@@ -25,6 +33,10 @@ class StaffRepository(BaseRepository):
         return mappings
 
     def get_filter_mappings(self):
+        """
+        returns a dictionary that maps filter values to SQL
+        database fields
+        """
         mappings = {
             "id": "staff.id",
             "name": "staff.name",
@@ -39,7 +51,7 @@ class StaffRepository(BaseRepository):
         filter: Filter = None,
         fields: List[str] = None,
         limit: int = None,
-        orderBy: str = None,
+        order_by: str = None,
     ):
         """
         Search for staff records based on department.
@@ -73,8 +85,8 @@ class StaffRepository(BaseRepository):
         if where_clause:
             query += f" WHERE {where_clause}"
 
-        if orderBy:
-            query += f" ORDER BY {orderBy}"
+        if order_by:
+            query += f" ORDER BY {order_by}"
 
         if limit:
             query += f" LIMIT {limit}"

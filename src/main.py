@@ -1,3 +1,8 @@
+"""
+main.py
+Initialises and runs the application. Sets up the database connection and
+initialises the repositories which are passed to the App class.
+"""
 from gui import App
 from dotenv import load_dotenv
 from data import (

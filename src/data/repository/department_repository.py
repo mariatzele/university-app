@@ -1,3 +1,7 @@
+"""
+department_repository.py
+Module for managing department records.
+"""
 from ..db import DB
 from .base_repository import BaseRepository
 
@@ -11,6 +15,10 @@ class DepartmentRepository(BaseRepository):
         super().__init__(db, "departments")
 
     def get_field_mappings(self):
+        """
+        returns a dictionary that maps human-readable field names to SQL
+        database fields
+        """
         mappings = {
             "ID": "departments.id",
             "Name": "departments.name",
@@ -19,6 +27,10 @@ class DepartmentRepository(BaseRepository):
         return mappings
 
     def get_filter_mappings(self):
+        """
+        returns a dictionary that maps filter values to SQL
+        database fields
+        """
         mappings = {
             "id": "departments.id",
             "name": "departments.name",
